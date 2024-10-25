@@ -10,12 +10,16 @@ Our experiment demonstrates that LA3D enables substantial improvement in the pri
 
 ## Code is coming soon!!!
 
-## Performance Results on Privacy Attribute Detection  vs. Video Anomaly Detection
+## Performance on Privacy Attribute Detection  vs. Video Anomaly Detection
+
+### Using PEL4VAD VAD Model
 <img src="./results/PEL4VAD_ad_ucf_auc_pd_vispr_cmap_clf_compare_all.jpg" alt="PEL4VAD VAD on UCF Crime vs. PD on VISPR" title="PEL4VAD VAD on UCF Crime vs. PD on VISPR" width=100% height=100%>
+
+### Using MGFN VAD Model
 <img src="./results/MGFN_ad_ucf_auc_pd_vispr_cmap_clf_compare_all.jpg" alt="MGFN VAD on UCF Crime vs. PD on VISP" title="MGFN VAD on UCF Crime vs. PD on VISPR" width=100% height=100%>
 
 
-## Example Images on Anonymization Enhancement using Out Adaptive Approach
+## Examples: Anonymization Enhancement using our Adaptive Approach (A)
 
 ### 1:RAW\_IMAGE, 2:BLACKENED, 3:BLACKENED_EDGED, 4:PIXELIZED_D2, 5:PIXELIZED_D4, 6:PIXELIZED_D8, 7:BLURRED, 
 <img src="./results/vispr_anony_compare_all_part_1_im_s320_240_images_2017_17368641.jpg" alt="images_2017_17368641" title="" width=100% height=100%>
