@@ -38,7 +38,7 @@ Our experiment demonstrates that LA3D enables substantial improvement in the pri
 
 ## BibTeX Citation
 
-If you employ any part of the code, please kindly cite the following papers:
+If you employ any part of the study or the code, please kindly cite the following papers:
 ```
 @article{asres2024la3d,
   title={Low-Latency Video Anonymization for Crowd Anomaly Detection: Privacy vs. Performance},
