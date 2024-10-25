@@ -36,3 +36,14 @@ Our experiment demonstrates that LA3D enables substantial improvement in the pri
 <img src="./results/vispr_anony_compare_D4_adpative_im_s320_240_images_2017_32563909.jpg" alt="VSIPR_TEST_IMAGE_3256390" title="1: RAW_IMAGE, 2: PIXELIZED_D4, 3: PIXELIZED_D4_A, 4: BLURRED, 5: BLURRED_A" width=100% height=100%>
 <img src="./results/vispr_anony_compare_D4_adpative_im_s320_240_images_2017_50916691.jpg" alt="VSIPR_TEST_IMAGE_50916691" title="1: RAW_IMAGE, 2: PIXELIZED_D4, 3: PIXELIZED_D4_A, 4: BLURRED, 5: BLURRED_A" width=100% height=100%>
 
+## BibTeX Citation
+
+If you employ any part of the code, please kindly cite the following papers:
+```
+@article{asres2024la3d,
+  title={Low-Latency Video Anonymization for Crowd Anomaly Detection: Privacy vs. Performance},
+  author={Asres, Mulugeta Weldezgina and Jiao, Lei and Omlin, Christian Walter},
+  journal={arXiv preprint arXiv:2410.18717},
+  year={2024}
+}
+```
