@@ -19,12 +19,12 @@ Our experiment demonstrates that LA3D enables substantial improvement in the pri
 <img src="./results/MGFN_ad_ucf_auc_pd_vispr_cmap_clf_compare_all.jpg" alt="MGFN VAD on UCF Crime vs. PD on VISP" title="MGFN VAD on UCF Crime vs. PD on VISPR" width=100% height=100%>
 
 
-## Examples: Anonymization Enhancement using our Adaptive Approach (A)
+## Examples: Anonymization Enhancement using our Adaptive Approach (_A)
 
-### 1:RAW\_IMAGE, 2:BLACKENED, 3:BLACKENED_EDGED, 4:PIXELIZED_D2, 5:PIXELIZED_D4, 6:PIXELIZED_D8, 7:BLURRED, 
+### 1:RAW\_IMAGE, 2:BLACKENED, 3:BLACKENED_EDGED, 4:PIXELIZED_D2, 5:PIXELIZED_D4, 6:PIXELIZED_D8, 7:BLURRED
 <img src="./results/vispr_anony_compare_all_part_1_im_s320_240_images_2017_17368641.jpg" alt="images_2017_17368641" title="" width=100% height=100%>
 
-###  8:PIXELIZED_D2_A ($\alpha_b=0.5$), 9:PIXELIZED_D4_A ($\alpha_b=0.5$), 10:PIXELIZED_D8_A ($\alpha_b=0.5$), 11:PIXELIZED_A ($ismax=True$, $D_a=Z_b$), 12:BLURRED_A ($\alpha_b=0.5$), 13:BLURRED_A ($ismax=True$, $K_a=Z_b$).
+###  8:PIXELIZED_D2_A ($\alpha_b=0.5$), 9:PIXELIZED_D4_A ($\alpha_b=0.5$), 10:PIXELIZED_D8_A ($\alpha_b=0.5$), 11:PIXELIZED_A ($ismax=True$, $D_a=Z_b$), 12:BLURRED_A ($\alpha_b=0.5$), 13:BLURRED_A ($ismax=True$, $K_a=Z_b$)
 <img src="./results/vispr_anony_compare_all_part_2_im_s320_240_images_2017_17368641.jpg" alt="images_2017_17368641" title="" width=100% height=100%>
 
 ### 1: RAW_IMAGE, 2: PIXELIZED_D4, 3: PIXELIZED_D4_A, 4: BLURRED, 5: BLURRED_A
