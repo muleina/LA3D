@@ -12,24 +12,23 @@ Our experiment demonstrates that LA3D enables substantial improvement in the pri
 
 ## Performance Results on Privacy Attribute Detection  vs. Video Anomaly Detection
 <img src="./results/PEL4VAD_ad_ucf_auc_pd_vispr_cmap_clf_compare_all.jpg" alt="PEL4VAD VAD on UCF Crime vs. PD on VISPR" title="PEL4VAD VAD on UCF Crime vs. PD on VISPR" width=100% height=100%>
-<img src="./results/MGFN_ad_ucf_auc_pd_vispr_cmap_clf_compare_all.jpg" alt="GFN VAD on UCF Crime vs. PD on VISP" title="MGFN VAD on UCF Crime vs. PD on VISPR" width=100% height=100%>
+<img src="./results/MGFN_ad_ucf_auc_pd_vispr_cmap_clf_compare_all.jpg" alt="MGFN VAD on UCF Crime vs. PD on VISP" title="MGFN VAD on UCF Crime vs. PD on VISPR" width=100% height=100%>
 
 
 ## Example Images on Anonymization Enhancement using Out Adaptive Approach
 
-### 1:RAW\_IMAGE, 2:BLACKENED, 3:BLACKENED\_EDGED, 4:PIXELIZED\_D2, 5:PIXELIZED\_D4, 6:PIXELIZED\_D8, 7:PIXELIZED\_D2\_A ($\alpha_b=0.5$), 8:PIXELIZED\_D4\_A ($\alpha_b=0.5$), 9:PIXELIZED\_D8\_A ($\alpha_b=0.5$), 10:BLURRED, 11:BLURRED\_A ($\alpha_b=0.5$), 12:PIXELIZED\_D2\_A ($\alpha_b=1.0$), 13:PIXELIZED\_D4\_A ($\alpha_b=1.0$), 14:PIXELIZED\_D8\_A ($\alpha_b=1.0$), 15:PIXELIZED\_A ($ismax=True$, $D_a=Z_b$), 16:BLURRED\_A ($\alpha_b=1.0$) and 17:BLURRED\_A ($ismax=True$, $K_a=Z_b$).
-<img src="./results/vispr_anony_compare_all_im_part2_scaled_s320_240_images_2017_17368641.jpg" alt="" title="" width=100% height=100%>
+### 1:RAW\_IMAGE, 2:BLACKENED, 3:BLACKENED_EDGED, 4:PIXELIZED_D2, 5:PIXELIZED_D4, 6:PIXELIZED_D8, 7:BLURRED, 
+<img src="./results/vispr_anony_compare_all_part_1_im_s320_240_images_2017_17368641.jpg" alt="images_2017_17368641" title="" width=100% height=100%>
 
-### 11:BLURRED\_A ($\alpha_b=0.5$), 12:PIXELIZED\_D2\_A ($\alpha_b=1.0$), 13:PIXELIZED\_D4\_A ($\alpha_b=1.0$), 14:PIXELIZED\_D8\_A ($\alpha_b=1.0$), 15:PIXELIZED\_A ($ismax=True$, $D_a=Z_b$), 16:BLURRED\_A ($\alpha_b=1.0$) and 17:BLURRED\_A ($ismax=True$, $K_a=Z_b$).
-<img src="./results/vispr_anony_compare_all_im_s320_240_images_2017_17368641.jpg" alt="" title="" width=100% height=100%>
+###  8:PIXELIZED_D2_A ($\alpha_b=0.5$), 9:PIXELIZED_D4_A ($\alpha_b=0.5$), 10:PIXELIZED_D8_A ($\alpha_b=0.5$), 11:PIXELIZED_A ($ismax=True$, $D_a=Z_b$), 12:BLURRED_A ($\alpha_b=0.5$), 13:BLURRED_A ($ismax=True$, $K_a=Z_b$).
+<img src="./results/vispr_anony_compare_all_part_2_im_s320_240_images_2017_17368641.jpg" alt="images_2017_17368641" title="" width=100% height=100%>
 
 ### 1: RAW_IMAGE, 2: PIXELIZED_D4, 3: PIXELIZED_D4_A, 4: BLURRED, 5: BLURRED_A
-<img src="./results/vispr_anony_compare_D4_adpative_im_s320_240_images_2017_29968642.jpg" alt="VSIPR_TEST_IMAGE_29968642" title="1: RAW_IMAGE, 2: PIXELIZED_D4, 3: PIXELIZED_D4_A, 4: BLURRED, 5: BLURRED_A" width=100% height=100%>
-<img src="./results/vispr_anony_compare_D4_adpative_im_s320_240_images_2017_50916691.jpg" alt="VSIPR_TEST_IMAGE_50916691" title="1: RAW_IMAGE, 2: PIXELIZED_D4, 3: PIXELIZED_D4_A, 4: BLURRED, 5: BLURRED_A" width=100% height=100%>
+<img src="./results/vispr_anony_compare_D4_adpative_im_s320_240_images_2017_40438231.jpg" alt="VSIPR_TEST_IMAGE_40438231" title="1: RAW_IMAGE, 2: PIXELIZED_D4, 3: PIXELIZED_D4_A, 4: BLURRED, 5: BLURRED_A" width=100% height=100%>
 <img src="./results/vispr_anony_compare_D4_adpative_im_s320_240_images_2017_29920650.jpg" alt="VSIPR_TEST_IMAGE_29920650" title="1: RAW_IMAGE, 2: PIXELIZED_D4, 3: PIXELIZED_D4_A, 4: BLURRED, 5: BLURRED_A" width=100% height=100%>
 <img src="./results/vispr_anony_compare_D4_adpative_im_s320_240_images_2017_31772060.jpg" alt="VSIPR_TEST_IMAGE_31772060" title="1: RAW_IMAGE, 2: PIXELIZED_D4, 3: PIXELIZED_D4_A, 4: BLURRED, 5: BLURRED_A" width=100% height=100%>
 <img src="./results/vispr_anony_compare_D4_adpative_im_s320_240_images_2017_99544991.jpg" alt="VSIPR_TEST_IMAGE_99544991" title="1: RAW_IMAGE, 2: PIXELIZED_D4, 3: PIXELIZED_D4_A, 4: BLURRED, 5: BLURRED_A" width=100% height=100%>
-<img src="./results/vispr_anony_compare_D4_adpative_im_s320_240_images_2017_40438231.jpg" alt="VSIPR_TEST_IMAGE_40438231" title="1: RAW_IMAGE, 2: PIXELIZED_D4, 3: PIXELIZED_D4_A, 4: BLURRED, 5: BLURRED_A" width=100% height=100%>
-<img src="./results/vispr_anony_compare_D4_adpative_im_s320_240_images_2017_14412647.jpg" alt="VSIPR_TEST_IMAGE_14412647" title="" width=100% height=100%>
+<img src="./results/vispr_anony_compare_D4_adpative_im_s320_240_images_2017_14412647.jpg" alt="VSIPR_TEST_IMAGE_14412647" title="1: RAW_IMAGE, 2: PIXELIZED_D4, 3: PIXELIZED_D4_A, 4: BLURRED, 5: BLURRED_A" width=100% height=100%>
 <img src="./results/vispr_anony_compare_D4_adpative_im_s320_240_images_2017_32563909.jpg" alt="VSIPR_TEST_IMAGE_3256390" title="1: RAW_IMAGE, 2: PIXELIZED_D4, 3: PIXELIZED_D4_A, 4: BLURRED, 5: BLURRED_A" width=100% height=100%>
+<img src="./results/vispr_anony_compare_D4_adpative_im_s320_240_images_2017_50916691.jpg" alt="VSIPR_TEST_IMAGE_50916691" title="1: RAW_IMAGE, 2: PIXELIZED_D4, 3: PIXELIZED_D4_A, 4: BLURRED, 5: BLURRED_A" width=100% height=100%>
 
