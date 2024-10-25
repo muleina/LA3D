@@ -1,7 +1,7 @@
 # LA3D 
 A lightweight adaptive anonymization for VAD (LA3D) that employs dynamic adjustment to enhance privacy protection. 
 
-## Abstract
+## Abstract (You can read the full paper in [arXiv](https://arxiv.org/abs/2410.18717))
 Recent advancements in artificial intelligence promise ample potential in monitoring applications with surveillance cameras.  
 However, concerns about privacy and model bias have made it challenging to utilize them in public. Although de-identification approaches have been proposed in the literature, aiming to achieve a certain level of anonymization, most of them employ deep learning models that are computationally demanding for real-time edge deployment. 
 In this study, we revisit conventional anonymization solutions for privacy protection and real-time video anomaly detection (VAD) applications. We propose a novel lightweight adaptive anonymization for VAD (LA3D) that employs dynamic adjustment to enhance privacy protection. 
