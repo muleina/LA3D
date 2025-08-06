@@ -1,0 +1,11 @@
+*/__pycache__/*
+*.ipynb_checkpoints*
+*.npy
+*.pyc
+*.pickle
+*.zip
+*.rar
+*.pth
+*.pkl
+*.pyc
+*.pt
