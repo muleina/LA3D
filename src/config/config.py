@@ -11,10 +11,10 @@ input_imgsz = (320, 240) # w
 
 object_detector_model_version = "yolov8m-seg.pt"
 # object_detector_model_version = yolo11m-seg.pt"
-object_detection_model_dict = dict(yolo={
-                                            'semantic': {'model':f'{object_detector_model_version}', 'kwargs':{}},
-                                            'instant': {'model':f'{object_detector_model_version}', 'kwargs':{}} 
-                                            })
+object_detection_model_dict = dict(yolo={ 
+                                        'semantic': {'model':f'{object_detector_model_version}', 'kwargs':{}},
+                                        'instant': {'model':f'{object_detector_model_version}', 'kwargs':{}} 
+                                        })
 object_detection_classid_mapper_dict = {"person":0, "car":2, "motorcycle":3, "bicycle":1, 
                             "cell phone":67, "laptop":63, "tv":62, 
                             "handbag":26, "backpack":24, "umbrella":25, "suitcase":28}

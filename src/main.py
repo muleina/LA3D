@@ -26,11 +26,6 @@ import matplotlib.pyplot as plt
 # import moviepy.editor as mpy
 from pathlib import Path
 
-import utilities as util
-from anony_interface import AnonymizerHub
-from ad_interface import VideoFeatureExtractor, pel4vad_interface, pel4vad_configs, mgfn_interface, mgfn_configs
-from config import config as cfg
-
 # -----------------------------------------------------------------------------
 # Path and Device Setup
 # -----------------------------------------------------------------------------
@@ -39,203 +34,12 @@ main_path = os.path.dirname(src_path)
 sys.path.append(src_path)
 sys.path.append(main_path)
 
+import utilities as util
+from anony_interface import ANInference
+from ad_interface import ADInference
+from config import config as cfg
+
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
-
-# -----------------------------------------------------------------------------
-# Visualization Parameters for Anomaly Detection (AD) Panel
-# -----------------------------------------------------------------------------
-AD_TEXT = "AD: {0:0.2f} Alert: "
-R = 4
-# AD_CENTER = [(4*R, 30), (6*R, 30), (8*R, 30)]
-TEXT_OFFSET = len(AD_TEXT)+R
-FLAG_COORDS = [(TEXT_OFFSET*R, 30), (TEXT_OFFSET*R+2*R, 30), (TEXT_OFFSET*R+4*R, 30)]
-TEXT_FACE = cv2.FONT_HERSHEY_SIMPLEX
-TEXT_SCALE = 0.09*R
-TEXT_THICKNESS = 0
-# AD_TEXT_COORD = AD_CENTER[0][0]-4*R, AD_CENTER[0][1] +1*R# x, y
-AD_TEXT_COORD = [0, FLAG_COORDS[0][1]+1*R]
-STATUS_REC_COORDS = (0, FLAG_COORDS[0][1]-2*R), (FLAG_COORDS[-1][0]+2*R, FLAG_COORDS[0][1]+2*R)
-
-# -----------------------------------------------------------------------------
-# Timer Utility
-# -----------------------------------------------------------------------------
-timer = util.ProcTimer()
-
-class ANInference():
-    """
-    AN Integration and Inference Engine.
-    Handles initialization and inference for anonymization methods.
-    """
-    def __init__(self, anony_method, **kwargs):
-        self.preprocessors_list = cfg.preprocessors_list
-        self.postprocessors_list = cfg.postprocessors_list
-        self.anony_method = anony_method
-
-        self.init_anonymizer(**kwargs)
-
-        self.input_frames_raw = []
-        self.input_frames_transformed = []
-        self.an_proc_time = 0.0
-
-    def init_anonymizer(self, kwargs_anony_method={}, kwargs_detector_method={}, **kwargs):
-        """
-        Initialize the anonymizer object with the selected method and parameters.
-        """
-        print("init_anonymizer...")
-
-        self.anony_method_kwargs = cfg.anny_transform_dict[cfg.anony_method_name_mapper_dict[self.anony_method]]
-        self.anony_method_kwargs['kwargs_anony_method']["preprocessors_list"] = self.preprocessors_list
-        self.anony_method_kwargs['kwargs_anony_method']["postprocessors_list"] = self.postprocessors_list
-        self.anonyObj = AnonymizerHub(method=self.anony_method_kwargs['anony_method'], 
-                                detector_name=self.anony_method_kwargs['detector_name'],
-                                kwargs_anony_method={**self.anony_method_kwargs['kwargs_anony_method'], **kwargs_anony_method}, 
-                                kwargs_detector_method={**self.anony_method_kwargs['kwargs_detector_method'], **kwargs_detector_method},
-                                target_resolution=None,
-                                isreset_cache=False,
-                                )
-
-    def inference(self, frames):
-        """
-        Run anonymization on input frames.
-        Args:
-            frames: Input image or video frames (BGR).
-        Returns:
-            success: Boolean indicating success.
-            frames_transformed: Anonymized frames.
-        """
-        success = False 
-        timer.restart()
-        try:
-            frames_transformed = self.anonyObj.anonymize(frames)
-            success = True
-        except Exception as ex:
-            print(f"AN ERROR: {ex}")
-            frames_transformed = None
-            
-        self.an_proc_time = np.round(timer.get_proctime(time_format="s"), 5)
-        timer.stop()
-
-        return success, frames_transformed 
-    
-class VADetector():
-    """
-    VAD Integration Engine.
-    Handles initialization and inference for video anomaly detection models.
-    """
-    def __init__(self, ad_modelname, kwargs_ad_method={}, **kwargs):
-        self.ad_modelname = ad_modelname
-        self.ad_model_src = kwargs_ad_method.get("ad_model_src", cfg.ad_model_src)
-        self.enc_frequency = kwargs_ad_method.get("enc_frequency", cfg.enc_vid_enc_frame_seq_size)
-        self.ad_thr = kwargs_ad_method.get("ad_thr", cfg.ad_thr)
-        
-        if ad_modelname in ["pel"]:
-            # Initialize PEL4VAD model and feature extractor
-            _pel4vad_cfg = pel4vad_configs.build_config(self.ad_model_src)
-            self.objVADModel = pel4vad_interface.load_model(_pel4vad_cfg.ckpt_path, datasource=self.ad_model_src).to(device)
-            self.objVADModel.eval()
-            
-            self.vidfeature_i3d_extractor = VideoFeatureExtractor(pretrainedpath=rf"{_pel4vad_cfg.enc_vid_model_filepath}", 
-                                                            frequency=self.enc_frequency, feature_dim=_pel4vad_cfg.enc_vid_feature_dim, sample_T=_pel4vad_cfg.enc_vid_num_crops)
-            
-            self.predict = lambda x: pel4vad_interface.predict(torch.tensor(x[:, :, :-1], dtype=torch.float32), self.objVADModel, frequency=self.vidfeature_i3d_extractor.frequency)
-
-        elif ad_modelname in ["mgfn"]:
-            # Initialize MGFN model and feature extractor            
-            _mgfn_cfg = mgfn_configs.build_config(self.ad_model_src)
-            self.objVADModel = mgfn_interface.load_model(filepath=_mgfn_cfg.ckpt_path, channels=_mgfn_cfg.feature_dim).to(device)
-            self.objVADModel.eval()
-            self.vidfeature_i3d_extractor = VideoFeatureExtractor(pretrainedpath=rf"{_mgfn_cfg.enc_vid_model_filepath}", 
-                                                            frequency=self.enc_frequency, feature_dim=_mgfn_cfg.enc_vid_feature_dim, sample_T=_mgfn_cfg.enc_vid_num_crops)
-            
-            self.predict = lambda x: mgfn_interface.predict(torch.tensor(x, dtype=torch.float32).unsqueeze(0).unsqueeze(0), self.objVADModel, frequency=self.vidfeature_i3d_extractor.frequency, device=device)
-        else:
-            raise "Undefined ad_modelname!"
-
-    def inference(self, video_frames):
-        """
-        Run anomaly detection on video frames.
-        Args:
-            video_frames: RGB frames [b, h, w, 3].
-        Returns:
-            success: Boolean indicating success.
-            ad_scores: Anomaly score(s) [b, 1].
-            video_frames: Input frames (unchanged).
-        """ 
-        success = False
-
-        if video_frames is None:
-            return success, None, video_frames
-        elif len(video_frames) < self.enc_frequency:
-            return success, None, video_frames
-
-        features = self.vidfeature_i3d_extractor.get_extracted_feature(video_frames, batch_size=20)
-        ad_scores = self.predict(features)
-        success = True
-        return success, ad_scores, video_frames
-
-class ADInference():
-    """
-    VAD Inference Engine.
-    Provides online and offline anomaly detection interfaces.
-    """   
-    def __init__(self, ObjVADetector, *args, **kwargs):
-
-        self.ObjVADetector = ObjVADetector
-        self.ad_thr = ObjVADetector.ad_thr
-        self.ad_proc_time = 0.0
-
-    def get_ad_status_offline(self, frames=None):
-        """
-        Offline anomaly detection for batch video data.
-        Args:
-            frames: RGB frames [b, h, w, 3].
-        Returns:
-            ad_success: Boolean indicating success.
-            ad_scores: Anomaly score(s) [b, 1].
-        """        
-        print("VAD Inference...")
-        try:
-            if frames is not None:
-                timer.restart()
-
-                ad_success, ad_scores, frames_snippets = self.ObjVADetector.inference(frames)
-                
-                self.ad_proc_time = np.round(timer.get_proctime(time_format="s"), 5)
-                timer.stop()
-                
-                if not ad_success:
-                    if len(frames_snippets) >= self.ObjVADetector.enc_frequency:
-                        print("AD ERROR!") 
-                    else:
-                        print("AD processing, filling sequence of frames...!")
-                    return False, None
-                
-                return ad_success, ad_scores
-
-            else:
-                return False, None
-
-        except Exception as ex:
-            print(f"{ex}")
-            return False, None
-    
-    def add_ad_status_to_frame(self, frame, ad_score):
-        """
-        Overlay anomaly detection status and score on the frame.
-        Args:
-            frame: RGB frame.
-            ad_score: Anomaly score.
-        Returns:
-            frame: Frame with overlay.
-        """
-        frame = cv2.rectangle(frame, STATUS_REC_COORDS[0], STATUS_REC_COORDS[1], (127, 127, 127), -1) # add status panel
-        ad_flag_color = (255,0,0) if ad_score >= self.ad_thr else (0,255,0)
-        for i in range(3):
-           _ = cv2.circle(frame, FLAG_COORDS[i], R, ad_flag_color, -1) 
-        
-        _ = cv2.putText(frame, AD_TEXT.format(ad_score) , AD_TEXT_COORD, TEXT_FACE, TEXT_SCALE, (0,0,255), TEXT_THICKNESS, cv2.LINE_AA)
-
-        return frame
 
 def an_inference_engine(*args, **kwargs):
     """
@@ -247,10 +51,9 @@ def video_ad_model_inference_engine(*args, **kwargs):
     """
     Init inference engine for VAD
     """
-    objVADModel = VADetector(*args, **kwargs)
-    return ADInference(objVADModel, *args, **kwargs)
+    return ADInference(*args, **kwargs)
 
-def app_init(app_mode, anony_method="no-an", ad_method="pel", **kwargs):
+def app_init(app_mode, anony_method: str = "no-an", ad_method: str = "pel", **kwargs) -> tuple[ANInference | None, ADInference | None]:
     """
     Initialize anonymization and anomaly detection engines based on app mode.
     Args:
@@ -262,18 +65,17 @@ def app_init(app_mode, anony_method="no-an", ad_method="pel", **kwargs):
         axisADObj: ADInference object.
     """    
     print("app_init...")
-
     axisANObj = None
-    axisADObj = None
-    
-    if "ad" in app_mode:
-        axisADObj = video_ad_model_inference_engine(ad_modelname=ad_method, **kwargs)
     if "an" in app_mode:
         axisANObj = an_inference_engine(anony_method, **kwargs)
     else:
         anony_method = "no-an"
         axisANObj = an_inference_engine(anony_method, **kwargs)
-       
+
+    axisADObj = None
+    if "ad" in app_mode:
+        axisADObj = video_ad_model_inference_engine(ad_modelname=ad_method, **kwargs)
+        
     return axisANObj, axisADObj
 
 if device == 'cuda':
@@ -295,13 +97,11 @@ def main(**kwargs):
     input_imgsz = kwargs.get("input_imgsz", [320, 240])
     fps = kwargs.get("fps", None)
     
-
     object_detection_classes = kwargs.get("object_detection_classes", cfg.object_detection_classname_list)
     object_detection_imgsz = kwargs.get("object_detection_imgsz", cfg.object_detection_imgsz)
     object_detection_thr = kwargs.get("object_detection_thr", cfg.object_detection_thr)
     
     anony_method = kwargs.get("anony_method", "mask")
-    
     alpha_mask_scale = kwargs.get("alpha_mask_scale", 1.0)
     alpha_dim_scale = kwargs.get("alpha_dim_scale", 0.5)
 
@@ -321,7 +121,10 @@ def main(**kwargs):
 
     AN_TEXT = (f"ANONYMIZED: {anony_method.upper()}" if anony_method!="no-an" else "NON-ANONYMIZED")    
 
-    kwargs_detector_method = {"classes":[cfg.object_detection_classid_mapper_dict[classname] for classname in object_detection_classes], "detection_thr":object_detection_thr, "imgsz":[int(s) for s in object_detection_imgsz]}
+    kwargs_detector_method = {"classes":[cfg.object_detection_classid_mapper_dict[classname] for classname in object_detection_classes], 
+                              "detection_thr":object_detection_thr, 
+                              "imgsz":[int(s) for s in object_detection_imgsz],
+                              "device":device}
     kwargs_anony_method = {"target_resolution":None, "alpha_dim_scale":alpha_dim_scale, "alpha_mask_scale":alpha_mask_scale, "color_format":"bgr"}
     kwargs_ad_method = {"ad_model_src":ad_model_src, "ad_thr":ad_thr}
 
@@ -329,11 +132,12 @@ def main(**kwargs):
                                     kwargs_detector_method=kwargs_detector_method, 
                                     kwargs_anony_method=kwargs_anony_method,
                                     kwargs_ad_method=kwargs_ad_method,
+                                    device=device
                                     )
 
     ########################################################################################
     # Start main processor
-
+    ########################################################################################
 
     image_width, image_height = None, None
     if input_imgsz is not None:
@@ -346,9 +150,11 @@ def main(**kwargs):
         fps = 5 if fps is None else fps
         camObj = None
         try:
-            webcam_id = 0
-            camObj = util.VideoCameraThreadQueue(webcam_id, width=image_width, height=image_height, fps=fps) # change this if webcam not on 0 incase of multiple webcams on the system
-
+            webcam_id = 1  # Change this if webcam not on 0 incase of multiple webcams on the system
+            if image_width is not None and image_height is not None:
+                camObj = util.VideoCameraThreadQueue(webcam_id, width=image_width, height=image_height, fps=fps)
+            else:
+                camObj = util.VideoCameraThreadQueue(webcam_id, fps=fps)
             print("initializing webcam done!")
         except Exception as ex:
             camObj = None
@@ -362,28 +168,36 @@ def main(**kwargs):
                 continue
 
             print(f"webcam is streaming...")
-            
-            an_success, frame = axisANObj.inference(img)
-            _ = cv2.putText(frame, f"PT:{axisANObj.an_proc_time:0.03f}s", AD_TEXT_COORD, TEXT_FACE, TEXT_SCALE, (255,0,0), TEXT_THICKNESS, cv2.LINE_AA)
 
+            # AN inference
+            an_success, frame = axisANObj.inference(img)
+            frame = axisANObj.add_an_status_to_frame(frame)
+
+            # Visualization
             cv2.imshow(f"{AN_TEXT} (press q to exit)", frame)
             if cv2.waitKey(1) == ord('q'):
                 camObj.stop()
                 break
     
     elif input_format == "image":
+        # Load image file
+        print("loading image file...")
         img = cv2.imread(rf"{input_datapath}") # BGR
+
         if input_imgsz is not None:
+            # Resize image to input size
             print(f"input image size: {img.shape}")
             img = util.image_resize(img, input_imgsz, mode="cv", ref="wh")
             print(f"input image resize: {img.shape}")
 
         # AN inference
+        print("AN inference...")
         an_success, frame = axisANObj.inference(img)
         if an_success:
             print("AN: {:0.03f} secs".format(axisANObj.an_proc_time))
 
             if issave:
+                # Save anonymized image
                 input_datapath = Path(input_datapath)
                 filename = ".".join(input_datapath.name.split(".")[:-1])
                 print(str(input_datapath))
@@ -395,6 +209,7 @@ def main(**kwargs):
                     util.Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)).save(output_filepath)                
 
             if visualize or not issave:
+                # Show anonymized image
                 cv2.imshow(f"{AN_TEXT} (press q to exit)", frame)
                 if cv2.waitKey() == ord('q'):
                     cv2.destroyAllWindows()
@@ -402,25 +217,25 @@ def main(**kwargs):
     elif input_format == "video":
         print("loading video footage...")
 
-        def an_ad_offline_result_presenter(video_frames):
+        def an_ad_offline_result_presenter(video_frames: list) -> tuple[plt.Figure | None, list | None]:
             """
             video_frames: BGR, [b, h, w, 3]
             ad_frame_list: RGB, [b, h, w, 3]
             """
             # AN inference
+            print("AN inference...")
             an_success, frames = axisANObj.inference(video_frames)
 
-            # Visualization           
             print("AN: {:0.03f} secs".format(axisANObj.an_proc_time))
 
             ad_score_fig, ad_frame_list = None, frames
-
             if frames is not None:
                 f = lambda x: cv2.cvtColor(x, cv2.COLOR_BGR2RGB).astype("uint8")
                 frames = list(map(f, frames))
                 
                 # AD inference
                 if axisADObj is not None:
+                    print("AD inference...")
                     ad_success, ad_scores = axisADObj.get_ad_status_offline(frames)
                     print("AD: {:0.03f} secs".format(axisADObj.ad_proc_time))
 
@@ -440,30 +255,31 @@ def main(**kwargs):
 
             return ad_score_fig, ad_frame_list
     
-        timer.restart()
+        # Load video file
+        print(f"loading video file: {input_datapath}")
         video_frames, video_meta = util.videofile_loader(input_datapath, start_sec=0, clip_duration=None, fps=fps, target_resolution=input_imgsz[::-1])
-
         frame_size = video_frames[0].shape
         video_length = len(video_frames)
         print(f"videofile frame length to process: {video_length}, frame_size: {frame_size}")
         ad_score_fig, ad_frame_list = an_ad_offline_result_presenter(video_frames)
        
         if issave:
+            # Save anonymized video frames and anomaly detection results
+            print("Saving anonymized video frames and anomaly detection results...")
             input_datapath = Path(input_datapath)
             filename = ".".join(input_datapath.name.split(".")[:-1])
             print(str(input_datapath))
             result_filename_template = f'{ad_method}_{ad_model_src}_{anony_method}_imwh{frame_size[1]}x{frame_size[0]}_{filename}'
-
             if output_dirpath is not None:
                 if ad_score_fig is not None:
                     util.save_figure(f'{result_filename_template}_ad', ad_score_fig, filepath=output_dirpath)
-
                 if ad_frame_list is not None:
                     mpyVidObj = util.mpy.ImageSequenceClip(ad_frame_list, fps=video_meta["fps"])
                     mpyVidObj.write_videofile(rf'{output_dirpath}/{result_filename_template}_ad.mp4', fps=video_meta["fps"], codec="libx264")
                     mpyVidObj.close()
         
         if (visualize or not issave) and (ad_frame_list is not None):
+            # Visualization    
             for frame in ad_frame_list:
                 cv2.imshow(f"{AN_TEXT}-{app_mode.upper()} (press q to exit)", frame)
                 if cv2.waitKey(1) == ord('q'):
