@@ -79,7 +79,7 @@ $G^0$: baseline Guassian, $G^a$: adaptive Guassian, $G^a_{max}$: adaptive maximu
 
 ## Examples: 
 
-### Anonymization Enhancement using our Adaptive Approach (^a) 
+### Anonymization Enhancement using our Adaptive Approach 
 
 Privacy protection comparison with baseline AN: 
 
