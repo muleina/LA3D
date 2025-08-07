@@ -44,7 +44,6 @@ $G^0$: baseline Guassian, $G^a$: adaptive Guassian, $G^a_{max}$: adaptive maximu
 
 ## Usage
   ### LA3D: Real-Time AN using Webcam
-  
     python main.py -a an -if webcam -anm mask -odc person -ods 320 240 -odt 0.25 -v
     python main.py -a an -if webcam -anm no-an -odc person -ods 320 240 -odt 0.25 -v
     python main.py -a an -if webcam -anm edge -odc person -ods 320 240 -odt 0.25 -v
@@ -57,7 +56,6 @@ $G^0$: baseline Guassian, $G^a$: adaptive Guassian, $G^a_{max}$: adaptive maximu
     python main.py -a an -if webcam -anm adaptive_max_pixelization -odc person -ods 320 240 -odt 0.25 -v
     
   ### LA3D: AN on Images
-
     python main.py -a an -if image -id "{add here the main_path}/data/VISPR/2017_17368641.jpg" -anm no-an -odc person -ods 320 240 -odt 0.25 -v
     python main.py -a an -if image -id "{add here the main_path}/data/VISPR/2017_17368641.jpg" -anm mask -odc person -ods 320 240 -odt 0.25 -s
     python main.py -a an -if image -id "{add here the main_path}/data/VISPR/2017_17368641.jpg" -anm blur -odc person -ods 320 240 -odt 0.25 -s
@@ -67,7 +65,6 @@ $G^0$: baseline Guassian, $G^a$: adaptive Guassian, $G^a_{max}$: adaptive maximu
     python main.py -a an -if image -id "{add here the main_path}/data/VISPR/2017_17368641.jpg" -anm adaptive_pixelization -odc person -ods 320 240 -odt 0.25 -s
     
   ### LA3D: AN-VAD on Videos
-  
     python main.py -a an-ad -ads ucf -if video -id  "{add here the main_path}/data/UCF_Crime/Burglary033_x264.mp4" -anm no-an -odc person -ods 320 240 -odt 0.25 -s
     python main.py -a an-ad -ads ucf -if video -id  "{add here the main_path}/data/UCF_Crime/Burglary033_x264.mp4" -anm mask -odc person -ods 320 240 -odt 0.25 -s
     python main.py -a an-ad -ads ucf -if video -id  "{add here the main_path}/data/UCF_Crime/Burglary033_x264.mp4" -anm blur -odc person -ods 320 240 -odt 0.25 -s
@@ -78,9 +75,7 @@ $G^0$: baseline Guassian, $G^a$: adaptive Guassian, $G^a_{max}$: adaptive maximu
     
 
 ## Examples: 
-
 ### AN Enhancement using our Adaptive Approach 
-
 Privacy protection comparison with baseline AN: 
 
 $G^0$: baseline Guassian, $G^a$: adaptive Guassian, $P^0$: baseline pixelization, and $\mathcal{P^a}$: adaptive pixelization.
@@ -90,7 +85,6 @@ Scalability comparison on different image resolutions
 <img src="./results/paper/adaptive_an_example_hyper_parameter_2.jpg" alt="Scalability of Adaptive AN on VISPR Dataset" title="Scalability of Adaptive AN on VISPR Dataset" width=100% height=100%>
 
 ### AN Trade-offs on VAD
-
 <img src="./results/paper/adaptive_an_vad_example_compare.jpg" alt="AN-vAD on the UCF-Crime and XD-Violence Datasets" title="AN-vAD on the UCF-Crime and XD-Violence Datasets" width=100% height=100%>
 
 ### More AN Results: 
