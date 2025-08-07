@@ -1,35 +1,100 @@
 # LA3D 
+
 A lightweight adaptive anonymization for VAD (LA3D) that employs dynamic adjustment to enhance privacy protection. 
 
-## Abstract (You can read the full paper in [arXiv](https://arxiv.org/abs/2410.18717))
-Recent advancements in artificial intelligence promise ample potential in monitoring applications with surveillance cameras.  
-However, concerns about privacy and model bias have made it challenging to utilize them in public. Although de-identification approaches have been proposed in the literature, aiming to achieve a certain level of anonymization, most of them employ deep learning models that are computationally demanding for real-time edge deployment. 
-In this study, we revisit conventional anonymization solutions for privacy protection and real-time video anomaly detection (VAD) applications. We propose a novel lightweight adaptive anonymization for VAD (LA3D) that employs dynamic adjustment to enhance privacy protection. 
-We evaluated the approaches on publicly available privacy and VAD data sets to examine the strengths and weaknesses of the different anonymization techniques and highlight the promising efficacy of our approach. 
-Our experiment demonstrates that LA3D enables substantial improvement in the privacy anonymization capability without majorly degrading VAD efficacy.
+## Summary (full paper in [arXiv](https://arxiv.org/abs/2410.18717))
 
-## Code is coming soon!!!
+Recent advancements in artificial intelligence hold considerable promise for enhancing monitoring applications using surveillance cameras.  
+However, concerns about privacy and model bias have made it challenging to utilize them in public. Although de-identification approaches have been proposed in the literature, aiming to achieve a certain level of anonymization, most of them employ deep learning models that are computationally demanding for real-time edge deployment. In this study, we revisit conventional anonymization solutions for privacy protection and real-time video anomaly detection (VAD) applications. We propose a novel lightweight adaptive anonymization for VAD (LA3D) that employs dynamic adjustment to enhance privacy protection. 
+We evaluated the approaches on publicly available privacy and VAD data sets to examine the strengths and weaknesses of the different anonymization techniques and highlight the promising efficacy of our strategy. 
+Our experiment demonstrates that LA3D enables substantial improvement in the privacy anonymization capability without significantly degrading VAD efficacy.
 
-## Performance on Privacy Attribute Detection  vs. Video Anomaly Detection
+## System Design of the LA3D  
 
-### Using PEL4VAD VAD Model
-<img src="./results/PEL4VAD_ad_ucf_auc_pd_vispr_cmap_clf_compare_all.jpg" alt="PEL4VAD VAD on UCF Crime vs. PD on VISPR" title="PEL4VAD VAD on UCF Crime vs. PD on VISPR" width=100% height=100%>
+General System Pipeline Diagram of Anonymized VAD
+<img src="./results/paper/LA3D_diagrams-vad_anonymized.png" alt="LA3D_diagrams-vad_anonymized" title="LA3D Diagram Anonymized VAD" width=100% height=100%>
 
-### Using MGFN VAD Model
-<img src="./results/MGFN_ad_ucf_auc_pd_vispr_cmap_clf_compare_all.jpg" alt="MGFN VAD on UCF Crime vs. PD on VISP" title="MGFN VAD on UCF Crime vs. PD on VISPR" width=100% height=100%>
+System Pipeline Diagram of the adaptive AN System: The adaptive AN enhances privacy protection by utilizing the dynamic AN method.
+<img src="./results/paper/LA3D_diagrams-vad_anonymized_adaptive_4.png" alt="LA3D Diagram Adaptive AN Approach" title="LA3D Diagram Adaptive AN Approach" width=100% height=100%>
+
+## Performance on Privacy Attribute Detection vs. Video Anomaly Detection
+
+Using PEL4VAD and MGFN VAD Models on the UCF-Crime and XD-Violence Datasets. 
+
+$G^0$: baseline Guassian, $G^a$: adaptive Guassian, $G^a_{max}$: adaptive maximum Guassian, $P^0$: baseline pixelization, $\mathcal{P^a}$: adaptive pixelization, and $P^a_{max}$: adaptive maximum pixelization.
+<img src="./results/paper/adaptive_an_vad_perf_ucf_xd.jpg" alt="The PEL4VAD and MGFN VAD models on UCF-Crime and XD-Violence vs. PD on VISPR" title="The PEL4VAD and MGFN VAD models on UCF-Crime and XD-Violence vs. PD on VISPR" width=100% height=100%>
+
+<!-- START doctoc -->
+**Table of Contents**
+- [Installation](https://github.com/muleina/LA3D#installation)
+- [Usage](https://github.com/muleina/LA3D#usage)
+  - [LA3D: Real-Time AN using Webcam](https://github.com/muleina/LA3D#LA3D:-real-time-an-using-webcam)
+  - [LA3D: AN on Images](https://github.com/muleina/LA3D#LA3D:-AN-on-Images)
+  - [LA3D: AN-VAD on Images](https://github.com/muleina/LA3D#LA3D:-AN-on-Images)
+- [Examples](https://github.com/muleina/LA3D#Examples)
+  - [Anonymization Enhancement using our Adaptive Approach](https://github.com/muleina/LA3D#Anonymization-Enhancement-using-our-Adaptive-Approach)
+  - [Anonymization Trade-offs on VAD](https://github.com/muleina/LA3D#Anonymization-Trade-offs-on-VAD)
+  - [More AN Results](https://github.com/muleina/LA3D#More-AN-Results)
+- [BibTeX Citation](https://github.com/muleina/LA3D#BibTeX-Citation)
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 
-## Examples: Anonymization Enhancement using our Adaptive Approach (_A)
+## Installation
+    conda env create -f environment.yml
 
-1:RAW_IMAGE, 2:BLACKENED, 3:BLACKENED_EDGED, 4:PIXELIZED_D2, 5:PIXELIZED_D4, 6:PIXELIZED_D8, 7:BLURRED
-<img src="./results/vispr_anony_compare_all_part_1_im_s320_240_images_2017_17368641.jpg" alt="images_2017_17368641" title="1:RAW_IMAGE, 2:BLACKENED, 3:BLACKENED_EDGED, 4:PIXELIZED_D2, 5:PIXELIZED_D4, 6:PIXELIZED_D8, 7:BLURRED" width=100% height=100%>
+## Usage
+  ### LA3D: Real-Time AN using Webcam
+  
+    python main.py -a an -if webcam -anm mask -odc person -ods 320 240 -odt 0.25 -v
+    python main.py -a an -if webcam -anm no-an -odc person -ods 320 240 -odt 0.25 -v
+    python main.py -a an -if webcam -anm edge -odc person -ods 320 240 -odt 0.25 -v
+    python main.py -a an -if webcam -anm blur -odc person -ods 320 240 -odt 0.25 -v
+    python main.py -a an -if webcam -anm adaptive_blur -odc person -ods 320 240 -odt 0.25 -v
+    python main.py -a an -if webcam -anm adaptive_full_blur -odc person -ods 320 240 -odt 0.25 -v
+    python main.py -a an -if webcam -anm adaptive_max_blur -odc person -ods 320 240 -odt 0.25 -v
+    python main.py -a an -if webcam -anm pixelization -odc person -ods 320 240 -odt 0.25 -v
+    python main.py -a an -if webcam -anm adaptive_pixelization -odc person -ods 320 240 -odt 0.25 -v
+    python main.py -a an -if webcam -anm adaptive_max_pixelization -odc person -ods 320 240 -odt 0.25 -v
+    
+  ### LA3D: AN on Images
 
-8:PIXELIZED_D2_A ($\alpha_b=0.5$), 9:PIXELIZED_D4_A ($\alpha_b=0.5$), 10:PIXELIZED_D8_A ($\alpha_b=0.5$), 11:PIXELIZED_A ($ismax=True$, $D_a=Z_b$), 12:BLURRED_A ($\alpha_b=0.5$), 13:BLURRED_A ($ismax=True$, $K_a=Z_b$)
-<img src="./results/vispr_anony_compare_all_part_2_im_s320_240_images_2017_17368641.jpg" alt="images_2017_17368641" title="PIXELIZED_D2_A ($\alpha_b=0.5$), 9:PIXELIZED_D4_A ($\alpha_b=0.5$), 10:PIXELIZED_D8_A ($\alpha_b=0.5$), 11:PIXELIZED_A ($ismax=True$, $D_a=Z_b$), 12:BLURRED_A ($\alpha_b=0.5$), 13:BLURRED_A ($ismax=True$, $K_a=Z_b$)" width=100% height=100%>
+    python main.py -a an -if image -id "{add here the main_path}/data/VISPR/2017_17368641.jpg" -anm no-an -odc person -ods 320 240 -odt 0.25 -v
+    python main.py -a an -if image -id "{add here the main_path}/data/VISPR/2017_17368641.jpg" -anm mask -odc person -ods 320 240 -odt 0.25 -s
+    python main.py -a an -if image -id "{add here the main_path}/data/VISPR/2017_17368641.jpg" -anm blur -odc person -ods 320 240 -odt 0.25 -s
+    python main.py -a an -if image -id "{add here the main_path}/data/VISPR/2017_17368641.jpg" -anm adaptive_blur -odc person -ods 320 240 -odt 0.25 -s
+    python main.py -a an -if image -id "{add here the main_path}/data/VISPR/2017_17368641.jpg" -anm adaptive_full_blur -odc person -ods 320 240 -odt 0.25 -s
+    python main.py -a an -if image -id "{add here the main_path}/data/VISPR/2017_17368641.jpg" -anm pixelization -odc person -ods 320 240 -odt 0.25 -s
+    python main.py -a an -if image -id "{add here the main_path}/data/VISPR/2017_17368641.jpg" -anm adaptive_pixelization -odc person -ods 320 240 -odt 0.25 -s
+    
+  ### LA3D: AN-VAD on Images
+  
+    python main.py -a an-ad -ads ucf -if video -id  "{add here the main_path}/data/UCF_Crime/Burglary033_x264.mp4" -anm no-an -odc person -ods 320 240 -odt 0.25 -s
+    python main.py -a an-ad -ads ucf -if video -id  "{add here the main_path}/data/UCF_Crime/Burglary033_x264.mp4" -anm mask -odc person -ods 320 240 -odt 0.25 -s
+    python main.py -a an-ad -ads ucf -if video -id  "{add here the main_path}/data/UCF_Crime/Burglary033_x264.mp4" -anm blur -odc person -ods 320 240 -odt 0.25 -s
+    python main.py -a an-ad -ads ucf -if video -id  "{add here the main_path}/data/UCF_Crime/Burglary033_x264.mp4" -anm adaptive_blur -odc person -ods 320 240 -odt 0.25 -s
+    python main.py -a an-ad -ads ucf -if video -id  "{add here the main_path}/data/UCF_Crime/Burglary033_x264.mp4" -anm adaptive_full_blur -odc person -ods 320 240 -odt 0.25 -s
+    python main.py -a an-ad -ads ucf -if video -id  "{add here the main_path}/data/UCF_Crime/Burglary033_x264.mp4" -anm pixelization -odc person -ods 320 240 -odt 0.25 -s
+    python main.py -a an-ad -ads ucf -if video -id  "{add here the main_path}/data/UCF_Crime/Burglary033_x264.mp4" -anm adaptive_pixelization -odc person -ods 320 240 -odt 0.25 -s
+    
 
+## Examples: 
 
-### More results: 
-1: RAW_IMAGE, 2: PIXELIZED_D4, 3: PIXELIZED_D4_A, 4: BLURRED, 5: BLURRED_A
+### Anonymization Enhancement using our Adaptive Approach (^a) 
+
+Privacy protection comparison with baseline AN: 
+
+$G^0$: baseline Guassian, $G^a$: adaptive Guassian, $P^0$: baseline pixelization, and $\mathcal{P^a}$: adaptive pixelization.
+<img src="./results/paper/adaptive_an_example_hyper_parameter_1.jpg" alt="Baseline vs Adaptive AN on VISPR Dataset" title="Baseline vs Adaptive AN onb VISPR Dataset" width=100% height=100%>
+
+Scalability comparison on different image resolutions
+<img src="./results/paper/adaptive_an_example_hyper_parameter_2.jpg" alt="Scalability of Adaptive AN on VISPR Dataset" title="Scalability of Adaptive AN on VISPR Dataset" width=100% height=100%>
+
+### Anonymization Trade-offs on VAD
+
+<img src="./results/paper/adaptive_an_vad_example_compare.jpg" alt="AN-vAD on the UCF-Crime and XD-Violence Datasets" title="AN-vAD on the UCF-Crime and XD-Violence Datasets" width=100% height=100%>
+
+### More AN Results: 
+$G^0$: baseline Guassian, $G^a$: adaptive Guassian, $P^0$: baseline pixelization, and $\mathcal{P^a}$: adaptive pixelization.
 <img src="./results/vispr_anony_compare_D4_adpative_im_s320_240_images_2017_40438231.jpg" alt="VSIPR_TEST_IMAGE_40438231" title="1: RAW_IMAGE, 2: PIXELIZED_D4, 3: PIXELIZED_D4_A, 4: BLURRED, 5: BLURRED_A" width=100% height=100%>
 <img src="./results/vispr_anony_compare_D4_adpative_im_s320_240_images_2017_29920650.jpg" alt="VSIPR_TEST_IMAGE_29920650" title="1: RAW_IMAGE, 2: PIXELIZED_D4, 3: PIXELIZED_D4_A, 4: BLURRED, 5: BLURRED_A" width=100% height=100%>
 <img src="./results/vispr_anony_compare_D4_adpative_im_s320_240_images_2017_31772060.jpg" alt="VSIPR_TEST_IMAGE_31772060" title="1: RAW_IMAGE, 2: PIXELIZED_D4, 3: PIXELIZED_D4_A, 4: BLURRED, 5: BLURRED_A" width=100% height=100%>
@@ -38,22 +103,8 @@ Our experiment demonstrates that LA3D enables substantial improvement in the pri
 <img src="./results/vispr_anony_compare_D4_adpative_im_s320_240_images_2017_32563909.jpg" alt="VSIPR_TEST_IMAGE_3256390" title="1: RAW_IMAGE, 2: PIXELIZED_D4, 3: PIXELIZED_D4_A, 4: BLURRED, 5: BLURRED_A" width=100% height=100%>
 <img src="./results/vispr_anony_compare_D4_adpative_im_s320_240_images_2017_50916691.jpg" alt="VSIPR_TEST_IMAGE_50916691" title="1: RAW_IMAGE, 2: PIXELIZED_D4, 3: PIXELIZED_D4_A, 4: BLURRED, 5: BLURRED_A" width=100% height=100%>
 
-
-###  Scaling with Image Resolution
-
-1:RAW_IMAGE, 2:PIXELIZED_D4_A ($\alpha_b=0.5$, $\alpha_r=0.5$), 3:PIXELIZED_D4_A ($\alpha_b=0.5$, $\alpha_r=Z/Z_{\text{ref}}$), 4:PIXELIZED_A ($ismax=True$, $D_a=Z_b$), 5:BLURRED_A ($\alpha_b=0.5$, $\alpha_r=0.5$), 6:BLURRED_A ($\alpha_b=0.5$, $\alpha_r=Z/Z_{\text{ref}}$), 7:BLURRED_A ($\alpha_b=0.5$, $\alpha_r=Z/Z_{\text{ref}}$, $isfullblur=True$), and 8:BLURRED_A ($ismax=True$, 
-$K_a=Z_b$). 
-
-Input image resolution $Z: [160 \times 120]$, the reference image size $Z_{\text{ref}}=[320 \times 240]$.
-<img src="./results/vispr_anony_compare_all_im_scaled_s160_120_images_2017_17368641.jpg" alt="images_2017_17368641" title="Z: [160 x 120]" width=100% height=100%>
-Input image resolution $Z: [320 \times 240]$, the reference image size $Z_{\text{ref}}=[320 \times 240]$.
-<img src="./results/vispr_anony_compare_all_im_scaled_s320_240_images_2017_17368641.jpg" alt="images_2017_17368641" title="[320 x 240]" width=100% height=100%>
-Input image resolution $Z: [1280 \times 960]$, the reference image size $Z_{\text{ref}}=[320 \times 240]$.
-<img src="./results/vispr_anony_compare_all_im_scaled_s1280_960_images_2017_17368641.jpg" alt="images_2017_17368641" title="[1280 x 960]" width=100% height=100%>
-
 ## BibTeX Citation
-
-If you employ any part of the study or the code, please kindly cite the following papers:
+If you employ any part of the study or the code, please kindly cite the following paper:
 ```
 @article{asres2024la3d,
   title={Low-Latency Video Anonymization for Crowd Anomaly Detection: Privacy vs. Performance},
@@ -62,3 +113,4 @@ If you employ any part of the study or the code, please kindly cite the followin
   year={2024}
 }
 ```
+<!-- END doctoc -->
