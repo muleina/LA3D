@@ -28,12 +28,12 @@ $G^0$: baseline Guassian, $G^a$: adaptive Guassian, $G^a_{max}$: adaptive maximu
 **Table of Contents**
 - [Installation](https://github.com/muleina/LA3D#installation)
 - [Usage](https://github.com/muleina/LA3D#usage)
-  - [LA3D: Real-Time AN using Webcam](https://github.com/muleina/LA3D#LA3D:-real-time-an-using-webcam)
+  - [LA3D: Real-Time AN using Webcam](https://github.com/muleina/LA3D#LA3D:-Real-Time-AN-using-Webcam)
   - [LA3D: AN on Images](https://github.com/muleina/LA3D#LA3D:-AN-on-Images)
-  - [LA3D: AN-VAD on Images](https://github.com/muleina/LA3D#LA3D:-AN-on-Images)
+  - [LA3D: AN-VAD on Videos](https://github.com/muleina/LA3D#LA3D:-AN-VAD-on-Videos)
 - [Examples](https://github.com/muleina/LA3D#Examples)
-  - [Anonymization Enhancement using our Adaptive Approach](https://github.com/muleina/LA3D#Anonymization-Enhancement-using-our-Adaptive-Approach)
-  - [Anonymization Trade-offs on VAD](https://github.com/muleina/LA3D#Anonymization-Trade-offs-on-VAD)
+  - [AN Enhancement using our Adaptive Approach](https://github.com/muleina/LA3D#AN-Enhancement-using-our-Adaptive-Approach)
+  - [AN Trade-offs on VAD](https://github.com/muleina/LA3D#AN-Trade-offs-on-VAD)
   - [More AN Results](https://github.com/muleina/LA3D#More-AN-Results)
 - [BibTeX Citation](https://github.com/muleina/LA3D#BibTeX-Citation)
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -66,7 +66,7 @@ $G^0$: baseline Guassian, $G^a$: adaptive Guassian, $G^a_{max}$: adaptive maximu
     python main.py -a an -if image -id "{add here the main_path}/data/VISPR/2017_17368641.jpg" -anm pixelization -odc person -ods 320 240 -odt 0.25 -s
     python main.py -a an -if image -id "{add here the main_path}/data/VISPR/2017_17368641.jpg" -anm adaptive_pixelization -odc person -ods 320 240 -odt 0.25 -s
     
-  ### LA3D: AN-VAD on Images
+  ### LA3D: AN-VAD on Videos
   
     python main.py -a an-ad -ads ucf -if video -id  "{add here the main_path}/data/UCF_Crime/Burglary033_x264.mp4" -anm no-an -odc person -ods 320 240 -odt 0.25 -s
     python main.py -a an-ad -ads ucf -if video -id  "{add here the main_path}/data/UCF_Crime/Burglary033_x264.mp4" -anm mask -odc person -ods 320 240 -odt 0.25 -s
@@ -79,7 +79,7 @@ $G^0$: baseline Guassian, $G^a$: adaptive Guassian, $G^a_{max}$: adaptive maximu
 
 ## Examples: 
 
-### Anonymization Enhancement using our Adaptive Approach 
+### AN Enhancement using our Adaptive Approach 
 
 Privacy protection comparison with baseline AN: 
 
@@ -89,7 +89,7 @@ $G^0$: baseline Guassian, $G^a$: adaptive Guassian, $P^0$: baseline pixelization
 Scalability comparison on different image resolutions
 <img src="./results/paper/adaptive_an_example_hyper_parameter_2.jpg" alt="Scalability of Adaptive AN on VISPR Dataset" title="Scalability of Adaptive AN on VISPR Dataset" width=100% height=100%>
 
-### Anonymization Trade-offs on VAD
+### AN Trade-offs on VAD
 
 <img src="./results/paper/adaptive_an_vad_example_compare.jpg" alt="AN-vAD on the UCF-Crime and XD-Violence Datasets" title="AN-vAD on the UCF-Crime and XD-Violence Datasets" width=100% height=100%>
 
