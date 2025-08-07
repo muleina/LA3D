@@ -75,7 +75,7 @@ def app_init(app_mode, anony_method: str = "no-an", ad_method: str = "pel", **kw
     axisADObj = None
     if "ad" in app_mode:
         axisADObj = video_ad_model_inference_engine(ad_modelname=ad_method, **kwargs)
-        
+
     return axisANObj, axisADObj
 
 if device == 'cuda':
@@ -205,7 +205,7 @@ def main(**kwargs):
                 result_filename_template = f'{anony_method}_imwh{frame.shape[1]}x{frame.shape[0]}_{filename}'
                 if output_dirpath is not None:  
                     output_filepath = rf"{output_dirpath}/{result_filename_template}_an.jpg"
-                    print(output_filepath)
+                    print("saving image to ", output_filepath)
                     util.Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)).save(output_filepath)                
 
             if visualize or not issave:
@@ -272,11 +272,12 @@ def main(**kwargs):
             result_filename_template = f'{ad_method}_{ad_model_src}_{anony_method}_imwh{frame_size[1]}x{frame_size[0]}_{filename}'
             if output_dirpath is not None:
                 if ad_score_fig is not None:
-                    util.save_figure(f'{result_filename_template}_ad', ad_score_fig, filepath=output_dirpath)
+                    util.save_figure(ad_score_fig, f'{result_filename_template}_ad', output_dirpath, dpi=100, format="jpg", issave=True, isshow=False)
                 if ad_frame_list is not None:
-                    mpyVidObj = util.mpy.ImageSequenceClip(ad_frame_list, fps=video_meta["fps"])
-                    mpyVidObj.write_videofile(rf'{output_dirpath}/{result_filename_template}_ad.mp4', fps=video_meta["fps"], codec="libx264")
-                    mpyVidObj.close()
+                    util.save_video(ad_frame_list, video_meta["fps"], rf'{result_filename_template}_ad.mp4', output_dirpath)
+                    # mpyVidObj = util.mpy.ImageSequenceClip(ad_frame_list, fps=video_meta["fps"])
+                    # mpyVidObj.write_videofile(rf'{output_dirpath}/{result_filename_template}_ad.mp4', fps=video_meta["fps"], codec="libx264")
+                    # mpyVidObj.close()
         
         if (visualize or not issave) and (ad_frame_list is not None):
             # Visualization    

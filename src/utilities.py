@@ -12,7 +12,7 @@ import queue
 import cv2
 import os, sys
 # import torch
-import numpy as np, pandas as pd
+import numpy as np
 import matplotlib.pyplot as plt
 import moviepy.editor as mpy
 import time
@@ -23,25 +23,10 @@ from typing import Tuple
 current_path = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(current_path)
 
-global data_path
-global figure_path
-global src_path
-global save_dir
-global load_dir
-
-def get_working_dirs(base_path):
-    src_path = "{}//src//".format(base_path)
-    data_path = "{}//data//".format(base_path)
-    result_path = "{}//results//".format(base_path)
-    return src_path, data_path, result_path
-
-root_path = os.path.dirname(current_path)
-src_path, data_path, result_path = get_working_dirs(root_path)
-figure_path = result_path + "//figures//"
-save_dir = load_dir = root_path + "//data//"
-print(root_path, src_path, data_path)
-
 class ProcTimer():
+    """
+    Utility class for measuring process time.
+    """
     def __init__(self):
         self.start_time = time.time()
         self.end_time = 0
@@ -49,16 +34,31 @@ class ProcTimer():
         self.time_status = True
 
     def restart(self):
+        """
+        Restart the timer.
+        """
         self.start_time = time.time()
         self.end_time = 0
         self.time_status = True
 
     def stop(self):
+        """
+        Stop the timer.
+        """
         self.time_status = False
         self.end_time = time.time()
         self.proc_time = self.end_time - self.start_time
 
-    def get_proctime(self, time_format="s"):
+    def get_proctime(self, time_format: str = "s") -> float:
+        """
+        Get the elapsed process time.
+
+        Args:
+            time_format (str): Format of time (default: "s" for seconds).
+
+        Returns:
+            float: Process time in seconds.
+        """
         if self.time_status:
             self.end_time = time.time()
             self.proc_time = self.end_time - self.start_time
@@ -66,23 +66,38 @@ class ProcTimer():
         if time_format == "s":
             return self.proc_time
 
-    def display_proctime(self, time_format="s"):
-        print("process time: {:0.5} seconds.".format(
-            self.get_proctime(time_format=time_format)))
+    def display_proctime(self, time_format: str = "s") -> None:
+        """
+        Print the process time.
+
+        Args:
+            time_format (str): Format of time (default: "s" for seconds).
+        """
+        print("process time: {:0.5} seconds.".format(self.get_proctime(time_format=time_format)))
 
 class VideoCameraThreadQueue:
     """
     Class that continuously gets frames from a VideoCapture object
-    with a dedicated thread.
+    with a dedicated thread for real-time video streaming.
     """
 
-    def __init__(self, src, timeout=0.0, fps=5, width=640, height=480, **kwargs):
-        
+    def __init__(self, src, timeout: float = 0.0, fps: int = 5, width: int = 640, height: int = 480, **kwargs):
+        """
+        Initialize the threaded video capture.
+
+        Args:
+            src: Video source (file path or camera index).
+            timeout (float): Not used.
+            fps (int): Frames per second.
+            width (int): Frame width.
+            height (int): Frame height.
+            **kwargs: Additional arguments.
+        """     
         self.stopped = True
 
         try:
             self.stream = cv2.VideoCapture(src)
-            # set settings
+            # set video properties
             self.stream.set(cv2.CAP_PROP_FRAME_WIDTH, width)
             self.stream.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
             self.stream.set(cv2.CAP_PROP_FPS, fps)
@@ -90,8 +105,8 @@ class VideoCameraThreadQueue:
         except Exception as ex:
             print(f"Video capture init error: {ex}. Retying with CAP_DSHOW...")
             try:
-                self.stream = cv2.VideoCapture(src, cv2.CAP_DSHOW) # to avoid error global cap_msmf.cpp:1759 CvCapture_MSMF::grabFrame videoio(MSMF): can't grab frame. Error: -1072873821
-                # set settings
+                self.stream = cv2.VideoCapture(src, cv2.CAP_DSHOW)
+                # set video properties
                 self.stream.set(cv2.CAP_PROP_FRAME_WIDTH, width)
                 self.stream.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
                 self.stream.set(cv2.CAP_PROP_FPS, fps)
@@ -105,6 +120,9 @@ class VideoCameraThreadQueue:
         self.stopped = False
 
     def start(self):   
+        """
+        Start the video reading thread.
+        """
         try:
             self.q = queue.Queue()
             self.stream_thread = Thread(target=self._reader, daemon=True)
@@ -118,11 +136,13 @@ class VideoCameraThreadQueue:
         return self
 
     def _reader(self):
+        """
+        Internal thread function to read frames and put them in a queue.
+        """
         while (not self.stopped) and self.stream.isOpened():
             (self.grabbed, self.frame) = self.stream.read()
             if not self.grabbed:
                 break
-                # continue
 
             if not self.q.empty():
                 try:
@@ -133,11 +153,14 @@ class VideoCameraThreadQueue:
             self.q.put(self.frame)
 
     def read(self):
-        # return self.q.get()
-    
+        """
+        Get the latest frame from the queue.
+
+        Returns:
+            np.ndarray or None: The latest frame, or None if not available.
+        """
         try:
             return self.q.get()
-            # return self.q.get(block=True, timeout=0.1) 
         except queue.Empty:
             if self.stream is None:
                 self.stop()
@@ -151,26 +174,38 @@ class VideoCameraThreadQueue:
                     self.stopped = False
                 except Exception as ex:
                     print(f"VideoCapture init error: {ex}")
-
             return None
     
-    
     def stop(self):
-        try:
-            # safely close video stream
-            # self.stream_thread.stop()
-            self.stream = None
-        except Exception as ex: 
-            print(f"ERROR: VideoCameraThreadQueue stream stopping: {ex}")
-
+        """
+        Stop the video stream and thread.
+        """
+        self.stream = None
         self.stopped = True
    
-def videofile_loader(source_datapath, start_sec=0, clip_duration=None, fps=None, target_resolution=None, **kwargs):
+def videofile_loader(
+                    source_datapath: str,
+                    start_sec: int = 0,
+                    clip_duration: int = None,
+                    fps: int = None,
+                    target_resolution: Tuple[int, int] = None,
+                    **kwargs
+                ) -> Tuple[list, dict]:
     """
-    Video file loader
-    target_resolution: [h, w]
-    frames: BGR: [h, w, 3]
+    Load frames from a video file.
+
+    Args:
+        source_datapath (str): Path to the video file.
+        start_sec (int): Start time in seconds.
+        clip_duration (int): Duration of the clip to load (seconds).
+        fps (int): Frames per second to sample.
+        target_resolution (Tuple[int, int]): Target resolution (width, height).
+        **kwargs: Additional arguments.
+
+    Returns:
+        Tuple[list, dict]: List of frames (BGR) and video metadata, [height, width, 3].
     """
+    print("videofile_loader...")
 
     print("videofile_loader...")
 
@@ -179,31 +214,37 @@ def videofile_loader(source_datapath, start_sec=0, clip_duration=None, fps=None,
 
     mpyVidObj = mpy.VideoFileClip(source_datapath, target_resolution=target_resolution)
     mpyVidObj = mpyVidObj if fps is None else mpyVidObj.set_fps(fps)
-    # video_length = mpyVidObj.reader.nframes # does not update after subclip
     mpyVidObj: mpy.VideoClip = mpyVidObj.subclip(start_sec, start_sec + mpyVidObj.duration if clip_duration is None else start_sec + clip_duration)
-    
     video_duration = mpyVidObj.duration
     video_fps = round(mpyVidObj.fps)
     # frame_size = mpyVidObj.size
     # num_frames = round(video_duration*video_fps)
-    
     frames = [cv2.cvtColor(frame, cv2.COLOR_RGB2BGR) for frame in mpyVidObj.iter_frames(fps=None, with_times=False, logger=None, dtype="uint8")]
     num_frames = len(frames)
     frame_size = frames[0].shape
     
     timer.display_proctime()
     
-    video_meta = {    
-                    "num_frames": num_frames, 
-                    "fps": video_fps, 
-                    "duration_sec": video_duration, 
-                    "frame_size": frame_size
-                }
+    video_meta = {
+        "num_frames": num_frames,
+        "fps": video_fps,
+        "duration_sec": video_duration,
+        "frame_size": frame_size
+    }
     print(f"loaded frame duration: {video_duration} secs, frame length: {num_frames}, fps: {video_fps}, resolution: {frame_size}")
-
     return frames, video_meta
 
-def convertcolor_hexstr2tuple(color, color_format="rgb"):
+def convertcolor_hexstr2tuple(color: str, color_format: str = "rgb") -> Tuple[int, int, int]:
+    """
+    Convert a hex color string to an RGB or BGR tuple.
+
+    Args:
+        color (str): Hex color string (e.g., "#ff0000").
+        color_format (str): "rgb" or "bgr".
+
+    Returns:
+        Tuple[int, int, int]: Color tuple.
+    """
     if isinstance(color, str):
         hex2rgb = tuple(int(color.lstrip('#')[i:i+2], 16) for i in (0, 2, 4))
         if color_format == "bgr":
@@ -211,122 +252,162 @@ def convertcolor_hexstr2tuple(color, color_format="rgb"):
         color = hex2rgb
     return color
 
-def image_resize(x, target_resolution, mode="cv", ref="w"):
+def image_resize(
+                x: np.ndarray,
+                target_resolution: Tuple[int, int],
+                mode: str = "cv",
+                ref: str = "w"
+            ) -> np.ndarray:
+    """
+    Resize an image to the target resolution, preserving aspect ratio.
+
+    Args:
+        x (np.ndarray): Input image.
+        target_resolution (Tuple[int, int]): Target (width, height).
+        mode (str): "cv" for OpenCV (BGR), "pil" for PIL (RGB).
+        ref (str): Reference dimension ("w" or "h").
+
+    Returns:
+        np.ndarray: Resized image.
+    """
     if mode == "pil": # rgb
         ispil = not isinstance(x, np.ndarray)
         if not ispil:
             x = Image.fromarray(x)
-
         x_input_size = (x.width, x.height)
         w, h = target_resolution
         if ref == "w":
-            alpha_size_scale = w/x_input_size[0]
-            h = int(x_input_size[1]*alpha_size_scale)
+            alpha_size_scale = w / x_input_size[0]
+            h = int(x_input_size[1] * alpha_size_scale)
         elif ref == "h":
-            alpha_size_scale = h/x_input_size[1]
-            w = int(x_input_size[0]*alpha_size_scale)
+            alpha_size_scale = h / x_input_size[1]
+            w = int(x_input_size[0] * alpha_size_scale)
         else:
             pass
-
         anony_base_size = (w, h)
         x = x.resize(anony_base_size, Image.LANCZOS)
-
         if ispil: 
             return x
         return np.asarray(x)
-
+    
     elif mode == "cv": #bgr
         x_input_size = x.shape[:-1][::-1]
         w, h = target_resolution
         if ref == "w":
-            alpha_size_scale = w/x_input_size[0]
-            h = int(x_input_size[1]*alpha_size_scale)
+            alpha_size_scale = w / x_input_size[0]
+            h = int(x_input_size[1] * alpha_size_scale)
         elif ref == "h":
-            alpha_size_scale = h/x_input_size[1]
-            w = int(x_input_size[0]*alpha_size_scale)
+            alpha_size_scale = h / x_input_size[1]
+            w = int(x_input_size[0] * alpha_size_scale)
         else:
             pass
-
         anony_base_size = (w, h)
         x = cv2.resize(x, anony_base_size)
         return x
-        
+    
     else:
         raise Exception(f"Undefined mode {mode}. choose from cv or pil.")
         
-def resize_with_pad(image: np.array, 
+def resize_with_pad(image: np.ndarray, 
                     new_shape: Tuple[int, int], 
-                    padding_color: Tuple[int] = (255, 255, 255)) -> np.array:
-    """Maintains aspect ratio and resizes with padding.
-    Params:
-        image: Image to be resized.
-        new_shape: Expected (width, height) of new image.
-        padding_color: Tuple in BGR of padding color
+                    padding_color: Tuple[int] = (255, 255, 255)
+                ) -> np.ndarray:
+    """
+    Resize image with padding while maintaining the aspect ratio.
+
+    Args:
+        image (np.ndarray): Input image.
+        new_shape (Tuple[int, int]): Target (width, height): Expected (width, height) of new image. 
+        padding_color (Tuple[int, int, int]): Padding color (BGR): Tuple in BGR of padding color.
+
     Returns:
-        image: Resized image with padding
+        np.ndarray: Resized image with padding.
     """
     original_shape = (image.shape[1], image.shape[0])
-    ratio = float(max(new_shape))/max(original_shape)
-    new_size = tuple([int(x*ratio) for x in original_shape])
+    ratio = float(max(new_shape)) / max(original_shape)
+    new_size = tuple([int(x * ratio) for x in original_shape])
     image = cv2.resize(image, new_size)
     delta_w = new_shape[0] - new_size[0]
     delta_h = new_shape[1] - new_size[1]
-    top, bottom = delta_h//2, delta_h-(delta_h//2)
-    left, right = delta_w//2, delta_w-(delta_w//2)
+    top, bottom = delta_h // 2, delta_h - (delta_h // 2)
+    left, right = delta_w // 2, delta_w - (delta_w // 2)
     print(ratio, new_size, delta_w, delta_h)
     print(top, bottom, left, right)
     image = cv2.copyMakeBorder(image, top, bottom, left, right, cv2.BORDER_CONSTANT, value=padding_color)
     return image
 
-def add_pad(image: np.array, 
-                    new_shape: Tuple[int, int], 
-                    padding_color: Tuple[int] = (255, 255, 255)) -> np.array:
-    """Maintains resizes with padding.
-    Params:
-        image: Image to be resized.
-        new_shape: Expected (width, height) of new image.
-        padding_color: Tuple in BGR of padding color
+def add_pad(image: np.ndarray, 
+            new_shape: Tuple[int, int], 
+            padding_color: Tuple[int] = (255, 255, 255)
+        ) -> np.ndarray:
+    """
+    Add padding to an image to reach the target shape.
+
+    Args:
+        image (np.ndarray): Input image.
+        new_shape (Tuple[int, int]): Target (width, height): Expected (width, height) of new image.
+        padding_color (Tuple[int, int, int]): Padding color (BGR).
+
     Returns:
-        image: Resized image with padding
+        np.ndarray: Image with added padding.
     """
     original_shape = (image.shape[1], image.shape[0])
     delta_w = new_shape[0] - original_shape[0]
     delta_h = new_shape[1] - original_shape[1]
-    top, bottom = delta_h//2, delta_h-(delta_h//2)
-    left, right = delta_w//2, delta_w-(delta_w//2)
+    top, bottom = delta_h // 2, delta_h - (delta_h // 2)
+    left, right = delta_w // 2, delta_w - (delta_w // 2)
     print(delta_w, delta_h)
     print(top, bottom, left, right)
     image = cv2.copyMakeBorder(image, top, bottom, left, right, cv2.BORDER_CONSTANT, value=padding_color)
     return image
 
-def remove_pad(image: np.array, 
-                    new_shape: Tuple[int, int]
-                    ) -> np.array:
-    """Maintains resizes with padding.
-    Params:
-        image: Image to be resized.
-        new_shape: Expected (width, height) of new image.
-        padding_color: Tuple in BGR of padding color
+def remove_pad(image: np.ndarray, 
+                new_shape: Tuple[int, int]
+            ) -> np.ndarray:
+    """
+    Remove padding from an image to reach the target shape.
+
+    Args:
+        image (np.ndarray): Input image.
+        new_shape (Tuple[int, int]): Target (width, height): Expected (width, height) of new image.
+
     Returns:
-        image: Resized image with padding
+        np.ndarray: Image with padding removed.
     """
     original_shape = (image.shape[1], image.shape[0])
     delta_w = original_shape[0] - new_shape[0] 
     delta_h = original_shape[1] - new_shape[1]
-    top, bottom = delta_h//2, delta_h-(delta_h//2)
-    left, right = delta_w//2, delta_w-(delta_w//2)
+    top, bottom = delta_h // 2, delta_h - (delta_h // 2)
+    left, right = delta_w // 2, delta_w - (delta_w // 2)
     print(original_shape, delta_w, delta_h)
     print(top, bottom, left, right)
     image = image[bottom:original_shape[1]-top, left:original_shape[0]-right]
     return image
 
-def save_figure(filename, fig, filepath=None, isshow=False, issave=True, dpi=300, format=".jpg"):
-    if not filepath:
-        filepath = figure_path
-    
-    print("saving ", filepath)
+def save_figure(fig,
+                filename: str,
+                filedirpath: str,
+                isshow: bool = False,
+                issave: bool = True,
+                dpi: int = 300,
+                format: str = ".jpg"
+            ) -> None:
+    """
+    Save a matplotlib figure to disk.
+
+    Args:
+        filename (str): Name of the file.
+        fig: Matplotlib figure object.
+        filedirpath (str): Directory to save the figure.
+        isshow (bool): Whether to display the figure.
+        issave (bool): Whether to save the figure.
+        dpi (int): Dots per inch for saved figure.
+        format (str): File format (e.g., ".jpg").
+    """
     if issave:
-        fig.savefig(Path(Path(filepath) , Path(f"{filename}{format}".format(filename, format))), dpi=dpi, bbox_inches='tight')
+        filepath = rf"{filedirpath}/{filename}.{format}"
+        print("saving to ", filedirpath)
+        fig.savefig(Path(filepath), dpi=dpi, bbox_inches='tight')
         if isshow:
             plt.show(fig)
         else:
@@ -334,3 +415,18 @@ def save_figure(filename, fig, filepath=None, isshow=False, issave=True, dpi=300
 
     if isshow:
         plt.show(fig)
+
+def save_video(frame_list: list, fps: int, filename: str, filedirpath: str) -> None:
+    """
+    Save a list of frames as a video file.
+    Args:
+        frame_list (list): List of frames (BGR).
+        fps (int): Frames per second.
+        filename (str): Name of the video file.
+        filedirpath (str): Directory to save the video file.
+    """
+    filepath = rf'{filedirpath}/{filename}.mp4'
+    print("saving video to ", filepath)
+    mpyVidObj = mpy.ImageSequenceClip(frame_list, fps=fps)
+    mpyVidObj.write_videofile(filepath, fps=fps, codec="libx264")
+    mpyVidObj.close()
