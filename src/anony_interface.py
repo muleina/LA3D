@@ -121,6 +121,9 @@ class NonAnonymizer():
     This class is used to return the original image without any anonymization, used as a placeholder when no anonymization is required.
     """
     def __init__(self) -> None:
+        """
+        Initialize the NonAnonymizer. 
+        """
         self.anony_type = "image"
         self.detector_method = None
         self.anonymizer = {"method": None,  "kwargs":{}}

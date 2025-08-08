@@ -12,7 +12,8 @@
 #   - Flexible command-line interface for configuration.
 #
 # Author: Mulugeta Weldezgina Asres
-# Date: October 2024
+# Email: muleina2000@gmail.com
+# Date: May 2025
 # =============================================================================
 
 import os, sys, gc

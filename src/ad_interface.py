@@ -37,13 +37,11 @@ from model.MGFN import model_interface as mgfn_interface
 # -----------------------------------------------------------------------------
 AD_TEXT = "AD: {0:0.2f} Alert: "
 R = 4
-# AD_CENTER = [(4*R, 30), (6*R, 30), (8*R, 30)]
 TEXT_OFFSET = len(AD_TEXT)+R
 FLAG_COORDS = [(TEXT_OFFSET*R, 30), (TEXT_OFFSET*R+2*R, 30), (TEXT_OFFSET*R+4*R, 30)]
 TEXT_FACE = cv2.FONT_HERSHEY_SIMPLEX
 TEXT_SCALE = 0.09*R
 TEXT_THICKNESS = 0
-# AD_TEXT_COORD = AD_CENTER[0][0]-4*R, AD_CENTER[0][1] +1*R# x, y
 AD_TEXT_COORD = [0, FLAG_COORDS[0][1]+1*R]
 STATUS_REC_COORDS = (0, FLAG_COORDS[0][1]-2*R), (FLAG_COORDS[-1][0]+2*R, FLAG_COORDS[0][1]+2*R)
 
@@ -112,7 +110,7 @@ class VideoFeatureExtractor():
         Returns:
             np.ndarray: Preprocessed image array.
         """
-        data = F.to_pil_image(frame_file) # handles tensor and numpy with different expected input dims
+        data = F.to_pil_image(frame_file)
         data = data.resize(self.target_resolution, Image.LANCZOS) # WxH
         data = np.asarray(data)
         data = data.astype(float)
@@ -123,8 +121,8 @@ class VideoFeatureExtractor():
         else: # for d=2048
             data = data/255.0
             # pytorchvideo.org kinetics
-            mean = [0.450, 0.450, 0.450] # or [114.75, 114.75, 114.75] on raw
-            std = [0.225, 0.225, 0.225] # or [57.375, 57.375, 57.375] on raw
+            mean = [0.450, 0.450, 0.450] 
+            std = [0.225, 0.225, 0.225]
             normalizer_mean = np.array(mean)[np.newaxis, np.newaxis,...]
             normalizer_std = np.array(std)[np.newaxis, np.newaxis,...]
             data = (data - normalizer_mean)/normalizer_std
@@ -210,7 +208,7 @@ class VideoFeatureExtractor():
         chunk_size = 16
         frame_cnt = len(rgb_files)
         print(f"frame_cnt: {frame_cnt}")
-        # Chunk frames for batch processing
+        # chunk frames for batch processing
         assert(frame_cnt > chunk_size)
         clipped_length = frame_cnt - chunk_size
         clipped_length = (clipped_length // self.frequency) * self.frequency  # the start of last chunk
