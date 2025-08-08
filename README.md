@@ -1,13 +1,43 @@
-# LA3D 
+# LA3D: A lightweight adaptive visual anonymization (AN) for video anomlay detection (VAD). 
 
-A lightweight adaptive anonymization for VAD (LA3D) that employs dynamic adjustment to enhance privacy protection. 
+Official implementation of the paper "Low-Latency Video Anonymization for Crowd Anomaly Detection: Privacy vs. Performance" (full paper in [arXiv](https://arxiv.org/abs/2410.18717))
 
-## Summary (full paper in [arXiv](https://arxiv.org/abs/2410.18717))
+The LA3D offer computationally efficient and dynamic AN that enhance privacy protection while maintain the accuracy of VAD. 
 
-Recent advancements in artificial intelligence hold considerable promise for enhancing monitoring applications using surveillance cameras.  
-However, concerns about privacy and model bias have made it challenging to utilize them in public. Although de-identification approaches have been proposed in the literature, aiming to achieve a certain level of anonymization, most of them employ deep learning models that are computationally demanding for real-time edge deployment. In this study, we revisit conventional anonymization solutions for privacy protection and real-time video anomaly detection (VAD) applications. We propose a novel lightweight adaptive anonymization for VAD (LA3D) that employs dynamic adjustment to enhance privacy protection. 
-We evaluated the approaches on publicly available privacy and VAD data sets to examine the strengths and weaknesses of the different anonymization techniques and highlight the promising efficacy of our strategy. 
-Our experiment demonstrates that LA3D enables substantial improvement in the privacy anonymization capability without significantly degrading VAD efficacy.
+## Highlights
+
+- Recent advancements in AI hold considerable promise for enhancing computer vision (CV) applications using surveillance cameras.  
+
+- Concerns about privacy and model bias have made it challenging to utilize CV in public. 
+
+- Most of them of the existing AN approaches employ deep learning models that are computationally demanding for real-time edge deployment. 
+
+- In this study, we revisit conventional AN solutions for privacy protection and real-time VAD. 
+
+- We propose a novel LA3D that employs dynamic AN adjustment to enhance privacy-aware VAD. 
+
+- We have evaluated the approaches on publicly available privacy-attribute and large-scale VAD data sets.
+
+- Our experiment demonstrates that LA3D enables substantial improvement in the privacy AN capability without significantly degrading VAD efficacy.
+
+## Resources
+
+We thank and give credit to the public data sets and source code for VAD model provides listed below.
+
+- Data sets
+    - Privacy Data sets:
+        - VISPR ([data](https://tribhuvanesh.github.io/vpa/), [paper](https://arxiv.org/abs/1703.10660))
+        - Market1501 ([data](https://academictorrents.com/details/3ea1f8ae1d3155addff586a96006d122587663ee), [paper](https://ieeexplore.ieee.org/document/7410490))
+
+    - Video Anomaly Detection:
+        - UCF-Crime ([repo](https://www.crcv.ucf.edu/projects/real-world/), [paper](https://openaccess.thecvf.com/content_cvpr_2018/html/Sultani_Real-World_Anomaly_Detection_CVPR_2018_paper.html))
+        - XD-Violence ([repo](https://roc-ng.github.io/XD-Violence/), [paper](https://link.springer.com/chapter/10.1007/978-3-030-58577-8_20))
+
+- Models: 
+    - PEL4VAD Weakly-Supervised VAD Model ([repo](https://github.com/yujiangpu20/PEL4VAD), [paper](https://arxiv.org/html/2306.14451v2))
+    - MGFN Weakly-Supervised VAD Model ([repo](https://github.com/carolchenyx/MGFN.), [paper](https://ojs.aaai.org/index.php/AAAI/article/view/25112))
+    - Video Encoding Model ([repo](https://github.com/google-deepmind/kinetics-i3d), [paper](https://arxiv.org/abs/1705.06950), [paper](https://arxiv.org/abs/1705.07750), [paper](https://openaccess.thecvf.com/content_cvpr_2018/html/Wang_Non-Local_Neural_Networks_CVPR_2018_paper.html))
+
 
 ## System Design of the LA3D  
 
@@ -35,14 +65,33 @@ $G^0$: baseline Guassian, $G^a$: adaptive Guassian, $G^a_{max}$: adaptive maximu
   - [AN Enhancement using our Adaptive Approach](https://github.com/muleina/LA3D#AN-Enhancement-using-our-Adaptive-Approach)
   - [AN Trade-offs on VAD](https://github.com/muleina/LA3D#AN-Trade-offs-on-VAD)
   - [More AN Results](https://github.com/muleina/LA3D#More-AN-Results)
+- [Computational Cost Analysis](https://github.com/muleina/LA3D#Computational-Cost-Analysis)
+- [Privacy-Leakage after AN](https://github.com/muleina/LA3D#Privacy-Leakage-after-AN)
 - [BibTeX Citation](https://github.com/muleina/LA3D#BibTeX-Citation)
+
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 
 ## Installation
+
     conda env create -f environment.yml
+    # Clone the repo.
+    git clone https://github.com/muleina/LA3D.git && cd LA3D
+
+    # Pip install to existing environment.
+    pip install -r pip_requirements.txt
+
+    # Anaconda install options.
+    conda create --name la3d --file conda_requirements.txt
+
+    # The setup configurations of the LA3D are given in the config/config.py file.
 
 ## Usage
+
+The app testing parameters can be supplied through the main.py. 
+
+Real-time processing through webcam and offline processing from image or video files are supported.
+
   ### LA3D: Real-Time AN using Webcam
     python main.py -a an -if webcam -anm mask -odc person -ods 320 240 -odt 0.25 -v
     python main.py -a an -if webcam -anm no-an -odc person -ods 320 240 -odt 0.25 -v
@@ -75,7 +124,7 @@ $G^0$: baseline Guassian, $G^a$: adaptive Guassian, $G^a_{max}$: adaptive maximu
     
 
 ## Examples: 
-### AN Enhancement using our Adaptive Approach 
+### AN Enhancement using LA3D's Adaptive Approach 
 Privacy protection comparison with baseline AN: 
 
 $G^0$: baseline Guassian, $G^a$: adaptive Guassian, $P^0$: baseline pixelization, and $\mathcal{P^a}$: adaptive pixelization.
@@ -85,19 +134,41 @@ Scalability comparison on different image resolutions
 <img src="./results/paper/adaptive_an_example_hyper_parameter_2.jpg" alt="Scalability of Adaptive AN on VISPR Dataset" title="Scalability of Adaptive AN on VISPR Dataset" width=100% height=100%>
 
 ### AN Trade-offs on VAD
+
 <img src="./results/paper/adaptive_an_vad_example_compare.jpg" alt="AN-vAD on the UCF-Crime and XD-Violence Datasets" title="AN-vAD on the UCF-Crime and XD-Violence Datasets" width=100% height=100%>
 
 ### More AN Results: 
-$G^0$: baseline Guassian, $G^a$: adaptive Guassian, $P^0$: baseline pixelization, and $\mathcal{P^a}$: adaptive pixelization.
-<img src="./results/vispr_anony_compare_D4_adpative_im_s320_240_images_2017_40438231.jpg" alt="VSIPR_TEST_IMAGE_40438231" title="1: RAW_IMAGE, 2: PIXELIZED_D4, 3: PIXELIZED_D4_A, 4: BLURRED, 5: BLURRED_A" width=100% height=100%>
-<img src="./results/vispr_anony_compare_D4_adpative_im_s320_240_images_2017_29920650.jpg" alt="VSIPR_TEST_IMAGE_29920650" title="1: RAW_IMAGE, 2: PIXELIZED_D4, 3: PIXELIZED_D4_A, 4: BLURRED, 5: BLURRED_A" width=100% height=100%>
-<img src="./results/vispr_anony_compare_D4_adpative_im_s320_240_images_2017_31772060.jpg" alt="VSIPR_TEST_IMAGE_31772060" title="1: RAW_IMAGE, 2: PIXELIZED_D4, 3: PIXELIZED_D4_A, 4: BLURRED, 5: BLURRED_A" width=100% height=100%>
-<img src="./results/vispr_anony_compare_D4_adpative_im_s320_240_images_2017_99544991.jpg" alt="VSIPR_TEST_IMAGE_99544991" title="1: RAW_IMAGE, 2: PIXELIZED_D4, 3: PIXELIZED_D4_A, 4: BLURRED, 5: BLURRED_A" width=100% height=100%>
-<img src="./results/vispr_anony_compare_D4_adpative_im_s320_240_images_2017_14412647.jpg" alt="VSIPR_TEST_IMAGE_14412647" title="1: RAW_IMAGE, 2: PIXELIZED_D4, 3: PIXELIZED_D4_A, 4: BLURRED, 5: BLURRED_A" width=100% height=100%>
-<img src="./results/vispr_anony_compare_D4_adpative_im_s320_240_images_2017_32563909.jpg" alt="VSIPR_TEST_IMAGE_3256390" title="1: RAW_IMAGE, 2: PIXELIZED_D4, 3: PIXELIZED_D4_A, 4: BLURRED, 5: BLURRED_A" width=100% height=100%>
-<img src="./results/vispr_anony_compare_D4_adpative_im_s320_240_images_2017_50916691.jpg" alt="VSIPR_TEST_IMAGE_50916691" title="1: RAW_IMAGE, 2: PIXELIZED_D4, 3: PIXELIZED_D4_A, 4: BLURRED, 5: BLURRED_A" width=100% height=100%>
+$No-AN$: Non-anonymized, $G^0$: baseline Guassian, $G^a$: adaptive Guassian, $P^0$: baseline pixelization, and $\mathcal{P^a}$: adaptive pixelization.
+<img src="./results/paper/adaptive_an_example_compare.jpg" alt="AN on the VISPR Dataset" title="AN on the VISPR Dataset" width=100% height=100%>
+
+
+## Computational Cost Analysis
+
+The conventional baseline vs adaptive vs deep learning AN approaches on an Intel(R) Xeon(R) Platinum 8168 CPU @ 2.70GHz with 64GB RAM and Nvidia Tesla V100-SXM3-32GB.
+
+- The adaptive approaches of the LA3D increase the processing time by approximately 5%–6% compared to the baselines on the AN-VAD process. 
+
+We have also conducted the cost analysis of the AN in GPU and CPU modes: 
+
+- The adaptive AN increases the GPU processing time by $3$ to $6$ milliseconds and $1$ to $9$ milliseconds on CPU. 
+
+- The incremental peak memory cost remains roughly $220$ MB for the GPU and $160$ MB for the CPU, with a negligible difference from the baseline ANs. 
+
+- The DL method has a $16 \times$ slower speed and a $14 \times$  higher memory consumption. The [DeepPrivacy2](https://github.com/hukkelas/deep_privacy2), one of the state-of-the-art DL approaches in realistic image generation for AN, considerably sacrifices computation efficiency. 
+
+- The cost analysis demonstrates the feasibility of the proposed lightweight AN approaches for real-time edge CV applications.
+
+<img src="./results/paper/adaptive_an_cost_compare.jpg" alt="Per-Frame AN Computational Cost" title="Per-Frame AN Computational Cost" width=100% height=100%>
+
+## Privacy-Leakage after AN
+
+We have revealed potential privacy leakage after AN where individual person can be identified from personal belongings.
+
+<img src="./results/paper/mask_an_privacy_leakage_reid_through_objects.jpg" alt="Privacy Leakage after AN through Items" title="Privacy Leakage after AN through Items" width=100% height=100%>
+
 
 ## BibTeX Citation
+
 If you employ any part of the study or the code, please kindly cite the following paper:
 ```
 @article{asres2024la3d,
