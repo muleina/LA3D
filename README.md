@@ -4,7 +4,7 @@ Official implementation of the paper "Low-Latency Video Anonymization for Crowd 
 
 The LA3D offer computationally efficient and dynamic anonymization (AN) that enhance privacy protection while maintain the accuracy of Video Anomaly Detection (VAD). 
 
-## Highlights
+## Highlights (live dashboard demo at [PACA AI4citizens](https://ai4citizens.uia.no/app_dashboard))
 
 - Recent advancements in AI hold considerable promise for enhancing computer vision (CV) applications using surveillance cameras.  
 
