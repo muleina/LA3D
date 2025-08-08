@@ -1,8 +1,8 @@
-# LA3D: A lightweight adaptive visual anonymization (AN) for video anomlay detection (VAD). 
+# LA3D: A Lightweight Adaptive Anonymization for Video Anomaly Detection.
 
 Official implementation of the paper "Low-Latency Video Anonymization for Crowd Anomaly Detection: Privacy vs. Performance" (full paper in [arXiv](https://arxiv.org/abs/2410.18717))
 
-The LA3D offer computationally efficient and dynamic AN that enhance privacy protection while maintain the accuracy of VAD. 
+The LA3D offer computationally efficient and dynamic anonymization (AN) that enhance privacy protection while maintain the accuracy of Video Anomaly Detection (VAD). 
 
 ## Highlights
 
