@@ -416,17 +416,17 @@ class ConventionalImageAnonymizer():
                 raise ex
         else:
             assert downsize >= 1
-            if mask_scale > 0:
+            if mask_scale > 0: # bounded adaptive Guassian blur AN
                 im_box_scaler = np.log(mask_scale) if use_log_scaler else mask_scale
                 im_box_scaler = max(im_box_scaler, 1)
-                r = alpha_mask_scale*im_box_scaler
-                downsize_target = [int(max(r*downsize, alpha_mask_scale*downsize))]*2
+                r = alpha_mask_scale * im_box_scaler
+                downsize_target = [int(max(r*downsize, alpha_mask_scale * downsize))] * 2
                 downsize = tuple([min(max(int(alpha_dim_scale*d), 1), dt) for d, dt in zip([width, height], downsize_target)])
             else:
                 downsize =  tuple([downsize if d > downsize else d for d in [width, height]])
 
             try:
-                downsize_dims = (width//downsize[0], height//downsize[1])
+                downsize_dims = (width // downsize[0], height // downsize[1])
                 # Resize input to pixelated size  by downsize_dims
                 tmp = cv2.resize(x, downsize_dims, interpolation=cv2.INTER_LINEAR)
                 # restore image to original size

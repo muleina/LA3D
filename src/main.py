@@ -54,6 +54,44 @@ def video_ad_model_inference_engine(*args, **kwargs):
     """
     return ADInference(*args, **kwargs)
 
+def an_ad_offline_result_presenter(axisANObj, axisADObj, video_frames: list) -> tuple[plt.Figure | None, list | None]:
+    """
+    video_frames: BGR, [b, h, w, 3]
+    ad_frame_list: RGB, [b, h, w, 3]
+    """
+    # AN inference
+    print("AN inference...")
+    an_success, frames = axisANObj.inference(video_frames)
+
+    print("AN: {:0.03f} secs".format(axisANObj.an_proc_time))
+
+    ad_score_fig, ad_frame_list = None, frames
+    if frames is not None:
+        f = lambda x: cv2.cvtColor(x, cv2.COLOR_BGR2RGB).astype("uint8")
+        frames = list(map(f, frames))
+        
+        # AD inference
+        if axisADObj is not None:
+            print("AD inference...")
+            ad_success, ad_scores = axisADObj.get_ad_status_offline(frames)
+            print("AD: {:0.03f} secs".format(axisADObj.ad_proc_time))
+
+            ad_score_fig, ax = plt.subplots(figsize=(4, 2.5))
+            _  = ax.plot(ad_scores, label="VAD Score", color="blue")
+            _  = ax.plot([axisADObj.ad_thr]*len(ad_scores), label=f"VAD Threshold", color="gray", linestyle="--")
+            _  = ax.set_title(f"Anomaly Detection (dThr={axisADObj.ad_thr})", fontsize=10)
+            _  = plt.xlabel("Frames", fontsize=10)
+            _  = plt.ylabel("Value", fontsize=10)
+            _  = ax.legend(fontsize=8)
+
+            if ad_scores is not None:
+                ad_frame_list = []
+                for i, frame in enumerate(frames[:len(ad_scores)]):
+                    frame = axisADObj.add_ad_status_to_frame(frame, ad_scores[i])
+                    ad_frame_list.append(frame)
+
+    return ad_score_fig, ad_frame_list
+    
 def app_init(app_mode, anony_method: str = "no-an", ad_method: str = "pel", **kwargs) -> tuple[ANInference | None, ADInference | None]:
     """
     Initialize anonymization and anomaly detection engines based on app mode.
@@ -126,7 +164,7 @@ def main(**kwargs):
                               "detection_thr":object_detection_thr, 
                               "imgsz":[int(s) for s in object_detection_imgsz],
                               "device":device}
-    kwargs_anony_method = {"target_resolution":None, "alpha_dim_scale":alpha_dim_scale, "alpha_mask_scale":alpha_mask_scale, "color_format":"bgr"}
+    kwargs_anony_method = {"target_resolution":None, "alpha_mask_scale":alpha_mask_scale, "alpha_dim_scale":alpha_dim_scale, "color_format":"bgr"}
     kwargs_ad_method = {"ad_model_src":ad_model_src, "ad_thr":ad_thr}
 
     axisANObj, axisADObj = app_init(app_mode, anony_method=anony_method, ad_method=ad_method,
@@ -193,7 +231,7 @@ def main(**kwargs):
 
         # AN inference
         print("AN inference...")
-        an_success, frame = axisANObj.inference(img)
+        an_success, an_img = axisANObj.inference(img)
         if an_success:
             print("AN: {:0.03f} secs".format(axisANObj.an_proc_time))
 
@@ -203,66 +241,27 @@ def main(**kwargs):
                 filename = ".".join(input_datapath.name.split(".")[:-1])
                 print(str(input_datapath))
 
-                result_filename_template = f'{anony_method}_imwh{frame.shape[1]}x{frame.shape[0]}_{filename}'
+                result_filename_template = f'{anony_method}_imwh{an_img.shape[1]}x{an_img.shape[0]}_{filename}'
                 if output_dirpath is not None:  
                     output_filepath = rf"{output_dirpath}/{result_filename_template}_an.jpg"
                     print("saving image to ", output_filepath)
-                    util.Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)).save(output_filepath)                
+                    util.Image.fromarray(cv2.cvtColor(an_img, cv2.COLOR_BGR2RGB)).save(output_filepath)                
 
             if visualize or not issave:
                 # Show anonymized image
-                cv2.imshow(f"{AN_TEXT} (press q to exit)", frame)
+                cv2.imshow(f"{AN_TEXT} (press q to exit)", an_img)
                 if cv2.waitKey() == ord('q'):
                     cv2.destroyAllWindows()
 
     elif input_format == "video":
         print("loading video footage...")
-
-        def an_ad_offline_result_presenter(video_frames: list) -> tuple[plt.Figure | None, list | None]:
-            """
-            video_frames: BGR, [b, h, w, 3]
-            ad_frame_list: RGB, [b, h, w, 3]
-            """
-            # AN inference
-            print("AN inference...")
-            an_success, frames = axisANObj.inference(video_frames)
-
-            print("AN: {:0.03f} secs".format(axisANObj.an_proc_time))
-
-            ad_score_fig, ad_frame_list = None, frames
-            if frames is not None:
-                f = lambda x: cv2.cvtColor(x, cv2.COLOR_BGR2RGB).astype("uint8")
-                frames = list(map(f, frames))
-                
-                # AD inference
-                if axisADObj is not None:
-                    print("AD inference...")
-                    ad_success, ad_scores = axisADObj.get_ad_status_offline(frames)
-                    print("AD: {:0.03f} secs".format(axisADObj.ad_proc_time))
-
-                    ad_score_fig, ax = plt.subplots(figsize=(4, 2.5))
-                    _  = ax.plot(ad_scores, label="VAD Score", color="blue")
-                    _  = ax.plot([axisADObj.ad_thr]*len(ad_scores), label=f"VAD Threshold", color="gray", linestyle="--")
-                    _  = ax.set_title(f"Anomaly Detection (dThr={axisADObj.ad_thr})", fontsize=10)
-                    _  = plt.xlabel("Frames", fontsize=10)
-                    _  = plt.ylabel("Value", fontsize=10)
-                    _  = ax.legend(fontsize=8)
-
-                    if ad_scores is not None:
-                        ad_frame_list = []
-                        for i, frame in enumerate(frames[:len(ad_scores)]):
-                            frame = axisADObj.add_ad_status_to_frame(frame, ad_scores[i])
-                            ad_frame_list.append(frame)
-
-            return ad_score_fig, ad_frame_list
-    
         # Load video file
         print(f"loading video file: {input_datapath}")
         video_frames, video_meta = util.videofile_loader(input_datapath, start_sec=0, clip_duration=None, fps=fps, target_resolution=input_imgsz[::-1])
         frame_size = video_frames[0].shape
         video_length = len(video_frames)
         print(f"videofile frame length to process: {video_length}, frame_size: {frame_size}")
-        ad_score_fig, ad_frame_list = an_ad_offline_result_presenter(video_frames)
+        ad_score_fig, an_ad_frame_list = an_ad_offline_result_presenter(axisANObj, axisADObj, video_frames)
        
         if issave:
             # Save anonymized video frames and anomaly detection results
@@ -274,15 +273,12 @@ def main(**kwargs):
             if output_dirpath is not None:
                 if ad_score_fig is not None:
                     util.save_figure(ad_score_fig, f'{result_filename_template}_ad', output_dirpath, dpi=100, format="jpg", issave=True, isshow=False)
-                if ad_frame_list is not None:
-                    util.save_video(ad_frame_list, video_meta["fps"], rf'{result_filename_template}_ad.mp4', output_dirpath)
-                    # mpyVidObj = util.mpy.ImageSequenceClip(ad_frame_list, fps=video_meta["fps"])
-                    # mpyVidObj.write_videofile(rf'{output_dirpath}/{result_filename_template}_ad.mp4', fps=video_meta["fps"], codec="libx264")
-                    # mpyVidObj.close()
+                if an_ad_frame_list is not None:
+                    util.save_video(an_ad_frame_list, video_meta["fps"], rf'{result_filename_template}_ad.mp4', output_dirpath)
         
-        if (visualize or not issave) and (ad_frame_list is not None):
+        if (visualize or not issave) and (an_ad_frame_list is not None):
             # Visualization    
-            for frame in ad_frame_list:
+            for frame in an_ad_frame_list:
                 cv2.imshow(f"{AN_TEXT}-{app_mode.upper()} (press q to exit)", frame)
                 if cv2.waitKey(1) == ord('q'):
                     cv2.destroyAllWindows()

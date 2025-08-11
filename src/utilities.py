@@ -207,8 +207,6 @@ def videofile_loader(
     """
     print("videofile_loader...")
 
-    print("videofile_loader...")
-
     timer = ProcTimer()
     timer.restart()
 
@@ -226,11 +224,11 @@ def videofile_loader(
     timer.display_proctime()
     
     video_meta = {
-        "num_frames": num_frames,
-        "fps": video_fps,
-        "duration_sec": video_duration,
-        "frame_size": frame_size
-    }
+                    "num_frames": num_frames,
+                    "fps": video_fps,
+                    "duration": video_duration,
+                    "frame_size": frame_size
+                }
     print(f"loaded frame duration: {video_duration} secs, frame length: {num_frames}, fps: {video_fps}, resolution: {frame_size}")
     return frames, video_meta
 
@@ -252,6 +250,19 @@ def convertcolor_hexstr2tuple(color: str, color_format: str = "rgb") -> Tuple[in
         color = hex2rgb
     return color
 
+def load_image(img_path, img_size=None) -> np.ndarray:
+    # Load image file
+    print("loading image file...")
+    img = cv2.imread(rf"{img_path}") # BGR
+
+    if img_size is not None:
+        # Resize image to input size
+        print(f"input image size: {img.shape}")
+        img = image_resize(img, img_size, mode="cv", ref="wh")
+    
+    print(f"input image resize: {img.shape}")
+    return img
+    
 def image_resize(
                 x: np.ndarray,
                 target_resolution: Tuple[int, int],
