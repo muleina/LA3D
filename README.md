@@ -79,6 +79,9 @@ $G^0$: baseline Guassian, $G^a$: adaptive Guassian, $G^a_{max}$: adaptive maximu
     # Clone the repo.
     git clone https://github.com/muleina/LA3D.git && cd LA3D
 
+    # Download the model checkpoints from [here](https://drive.google.com/drive/folders/1EVZFgQJKvNVhUkrcdHYb7LvMWBGCGkPv?usp=drive_link). 
+    # Store the models in /src/models/{'MODEL NAME'}/. Keep the path structure for each model as the download repository.
+
     # Pip install to existing environment.
     pip install -r pip_requirements.txt
 
@@ -86,6 +89,8 @@ $G^0$: baseline Guassian, $G^a$: adaptive Guassian, $G^a_{max}$: adaptive maximu
     conda create --name la3d --file conda_requirements.txt
 
     # The setup configurations of the LA3D are given in the config/config.py file.
+
+    <!--  -->
 
 ## Usage
 
