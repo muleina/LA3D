@@ -30,7 +30,7 @@ def load_model(filepath: str = 'mgfn_ucf.pkl', **kwargs):
         Model: An instance of the MGFN model with loaded weights."""
     if os.path.isfile(filepath):    
         model = Model(**kwargs)
-        model.load_state_dict({k.replace('module.', ''): v for k, v in torch.load(filepath).items()})
+        model.load_state_dict({k.replace('module.', ''): v for k, v in torch.load(filepath, map_location=torch.device('cpu')).items()})
         print(f'Loaded model from {filepath}')
     else:
         raise FileNotFoundError(f'Model file {filepath} not found.')

@@ -30,7 +30,7 @@ def load_model(filepath, datasource="xd", **kwargs):
         print('loading pretrained checkpoint from {}.'.format(filepath))
         cfg = configs.build_config(datasource)
         model = XModel(cfg)
-        weight_dict = torch.load(filepath)
+        weight_dict = torch.load(filepath, map_location=torch.device('cpu'))
         model_dict = model.state_dict()
         for name, param in weight_dict.items():
             if 'module' in name:
