@@ -258,7 +258,7 @@ def main(**kwargs):
         print("loading video footage...")
         # Load video file
         print(f"loading video file: {input_datapath}")
-        video_frames, video_meta = util.videofile_loader(input_datapath, start_sec=0, clip_duration=None, fps=fps, target_resolution=input_imgsz[::-1])
+        video_frames, video_meta = util.videofile_loader(input_datapath, start_sec=0, clip_duration=None, fps=fps, target_resolution=input_imgsz[::-1] if input_imgsz is not None else None)
         frame_size = video_frames[0].shape
         video_length = len(video_frames)
         print(f"videofile frame length to process: {video_length}, frame_size: {frame_size}")
@@ -275,12 +275,15 @@ def main(**kwargs):
                 if ad_score_fig is not None:
                     util.save_figure(ad_score_fig, f'{result_filename_template}_ad', output_dirpath, dpi=100, format="jpg", issave=True, isshow=False)
                 if an_ad_frame_list is not None:
-                    util.save_video(an_ad_frame_list, video_meta["fps"], rf'{result_filename_template}_ad.mp4', output_dirpath)
+                    util.save_video(an_ad_frame_list, video_meta["fps"], rf'{result_filename_template}_ad', output_dirpath)
         
         if (visualize or not issave) and (an_ad_frame_list is not None):
             # Visualization    
+            if ad_score_fig is not None:
+                ad_score_fig.show()
+
             for frame in an_ad_frame_list:
-                cv2.imshow(f"{AN_TEXT}-{app_mode.upper()} (press q to exit)", frame)
+                cv2.imshow(f"{AN_TEXT}-{app_mode.upper()} (press q to exit)", cv2.cvtColor(frame, cv2.COLOR_RGB2BGR))
                 if cv2.waitKey(1) == ord('q'):
                     cv2.destroyAllWindows()
                     break
@@ -288,30 +291,30 @@ def main(**kwargs):
         raise f"Undefine input format! place choose from {cfg.input_data_source_formats}"               
 
 if __name__ == '__main__': 
-    parser = argparse.ArgumentParser(description="LA3D: Lightweight Anonymization (AN) for VAD")
+    parser = argparse.ArgumentParser(description="LA3D: Lightweight Anonymization (AN) for video anomaly detection (VAD)")
     print("#"*80)
 
-    parser.add_argument('-a', '--app_mode', type=str, default="an",  choices=["an", "ad", "an-ad"], help="an: for AN , ad: for VAD and an-ad: integration of AN and AD.")
+    parser.add_argument('-a', '--app_mode', type=str, default="an",  choices=["an", "ad", "an-ad"], help="an: for AN, ad: for VAD and an-ad: integration of AN and VAD.")
 
     parser.add_argument('-if', '--input_format', type=str, default="webcam", choices=["webcam", "image", "video"], help="app mode an is supported for all, while ad is for video files.")
-    parser.add_argument('-id', '--input_datapath', type=str, default=None)
-    parser.add_argument('-is', '--input_imgsz', nargs='+', default=[320, 240])
-    parser.add_argument('-fps', '--fps', type=int, default=None)
+    parser.add_argument('-id', '--input_datapath', type=str, default=None, help="input data path for image or video. if webcam, it will be ignored. e.g. webcam, image file path or video file path.")
+    parser.add_argument('-is', '--input_imgsz', nargs='+', default=None, type=int, help="input image size for webcam or video. e.g. 320 240")
+    parser.add_argument('-fps', '--fps', type=int, default=None, help="fps for webcam or video. if None, it will be set to 5 for webcam and video fps will be used as is.")
 
-    parser.add_argument('-anm', '--anony_method', type=str, default="mask", choices=cfg.anony_method_options_list)
-    parser.add_argument('-odc', '--object_detection_classes', nargs='+', default=cfg.object_detection_classname_list)
-    parser.add_argument('-ods', '--object_detection_imgsz', nargs='+', default=cfg.object_detection_imgsz)
-    parser.add_argument('-odt', '--object_detection_thr', type=float, default=cfg.object_detection_thr)
-    parser.add_argument('-anr', '--alpha_mask_scale', type=float, default=1.0)
-    parser.add_argument('-anl', '--alpha_dim_scale', type=float, default=0.5)
+    parser.add_argument('-anm', '--anony_method', type=str, default="mask", choices=cfg.anony_method_options_list, help="anonymization method to use. e.g. mask, no-an, edge, blur, adaptive_blur, adaptive_full_blur, adaptive_max_blur, pixelization, adaptive_pixelization, adaptive_max_pixelization")
+    parser.add_argument('-odc', '--object_detection_classes', nargs='+', default=cfg.object_detection_classname_list, help="object detection classes to use. e.g. person, car, bicycle, etc.")
+    parser.add_argument('-ods', '--object_detection_imgsz', nargs='+', default=cfg.object_detection_imgsz, help="object detection input image size. e.g. 320 240")
+    parser.add_argument('-odt', '--object_detection_thr', type=float, default=cfg.object_detection_thr, help="object detection threshold. e.g. 0.25")
+    parser.add_argument('-anr', '--alpha_mask_scale', type=float, default=1.0, help="alpha mask scale for adaptive anonymization methods. e.g. 1.0")
+    parser.add_argument('-anl', '--alpha_dim_scale', type=float, default=0.5, help="alpha dimension scale for adaptive anonymization methods. e.g. 0.5")
 
-    parser.add_argument('-adm', '--ad_method', type=str, default=cfg.ad_method_options_list[0])
-    parser.add_argument('-ads', '--ad_model_src', type=str, choices=["ucf", "xd"], default=cfg.ad_model_src)
-    parser.add_argument('-adt', '--ad_thr', type=float, default=cfg.ad_thr)
+    parser.add_argument('-adm', '--ad_method', type=str, default=cfg.ad_method_options_list[0], help="anomaly detection method to use. e.g. pel, mgfn, etc.")
+    parser.add_argument('-ads', '--ad_model_src', type=str, choices=["ucf", "xd"], default=cfg.ad_model_src, help="anomaly detection model source. e.g. ucf, xd")
+    parser.add_argument('-adt', '--ad_thr', type=float, default=cfg.ad_thr, help="anomaly detection threshold. e.g. 0.5")
 
-    parser.add_argument('-v', '--visualize', default=False, action="store_true")
-    parser.add_argument('-s', '--issave', default=False, action="store_true")
-    parser.add_argument('-od', '--output_dir', type=str, default=cfg.result_path)
+    parser.add_argument('-v', '--visualize', default=False, action="store_true", help="visualize the results. if not set, it will save the results to the output directory if issave is True.")
+    parser.add_argument('-s', '--issave', default=False, action="store_true", help="save the results to the output directory. if not set, it will visualize the results if visualize is True.")
+    parser.add_argument('-od', '--output_dir', type=str, default=cfg.result_path, help="output directory to save the results. if not set, it will save to the default result path.")
 
     args = parser.parse_args()
     print(args)
@@ -321,28 +324,27 @@ if __name__ == '__main__':
     print("#"*80)
 
 
-# python main.py -a an -if webcam -anm mask -odc person -ods 320 240 -odt 0.25 -v
-# python main.py -a an -if webcam -anm no-an -odc person -ods 320 240 -odt 0.25 -v
-# python main.py -a an -if webcam -anm edge -odc person -ods 320 240 -odt 0.25 -v
-# python main.py -a an -if webcam -anm blur -odc person -ods 320 240 -odt 0.25 -v
-# python main.py -a an -if webcam -anm adaptive_blur -odc person -ods 320 240 -odt 0.25 -v
-# python main.py -a an -if webcam -anm adaptive_full_blur -odc person -ods 320 240 -odt 0.25 -v
-# python main.py -a an -if webcam -anm adaptive_max_blur -odc person -ods 320 240 -odt 0.25 -v
-# python main.py -a an -if webcam -anm pixelization -odc person -ods 320 240 -odt 0.25 -v
-# python main.py -a an -if webcam -anm adaptive_pixelization -odc person -ods 320 240 -odt 0.25 -v
-# python main.py -a an -if webcam -anm adaptive_max_pixelization -odc person -ods 320 240 -odt 0.25 -v
+# python main.py -a an -if webcam -is 320 240 -anm mask -odc person -ods 320 240 -odt 0.25 -v
+# python main.py -a an -if webcam -is 320 240 -anm edge -odc person -ods 320 240 -odt 0.25 -v
+# python main.py -a an -if webcam -is 320 240 -anm blur -odc person -ods 320 240 -odt 0.25 -v
+# python main.py -a an -if webcam -is 320 240 -anm adaptive_blur -odc person -ods 320 240 -odt 0.25 -v
+# python main.py -a an -if webcam -is 320 240 -anm adaptive_full_blur -odc person -ods 320 240 -odt 0.25 -v
+# python main.py -a an -if webcam -is 320 240 -anm adaptive_max_blur -odc person -ods 320 240 -odt 0.25 -v
+# python main.py -a an -if webcam -is 320 240 -anm pixelization -odc person -ods 320 240 -odt 0.25 -v
+# python main.py -a an -if webcam -is 320 240 -anm adaptive_pixelization -odc person -ods 320 240 -odt 0.25 -v
+# python main.py -a an -if webcam -is 320 240 -anm adaptive_max_pixelization -odc person -ods 320 240 -odt 0.25 -v
 
-# python main.py -a an -if image -id "C:\Users\mulugetawa\OneDrive - Universitetet i Agder\UiA\Projects\AI4CITIZEN\LA3D\data\VISPR\2017_17368641.jpg" -anm no-an -odc person -ods 320 240 -odt 0.25 -v
-# python main.py -a an -if image -id "C:\Users\mulugetawa\OneDrive - Universitetet i Agder\UiA\Projects\AI4CITIZEN\LA3D\data\VISPR\2017_17368641.jpg" -anm mask -odc person -ods 320 240 -odt 0.25 -v
-# python main.py -a an -if image -id "C:\Users\mulugetawa\OneDrive - Universitetet i Agder\UiA\Projects\AI4CITIZEN\LA3D\data\VISPR\2017_17368641.jpg" -anm mask -odc person -ods 320 240 -odt 0.25 -s
-# python main.py -a an -if image -id "C:\Users\mulugetawa\OneDrive - Universitetet i Agder\UiA\Projects\AI4CITIZEN\LA3D\data\VISPR\2017_17368641.jpg" -anm edge -odc person -ods 320 240 -odt 0.25 -s
-# python main.py -a an -if image -id "C:\Users\mulugetawa\OneDrive - Universitetet i Agder\UiA\Projects\AI4CITIZEN\LA3D\data\VISPR\2017_17368641.jpg" -anm blur -odc person -ods 320 240 -odt 0.25 -s
-# python main.py -a an -if image -id "C:\Users\mulugetawa\OneDrive - Universitetet i Agder\UiA\Projects\AI4CITIZEN\LA3D\data\VISPR\2017_17368641.jpg" -anm adaptive_blur -odc person -ods 320 240 -odt 0.25 -s
-# python main.py -a an -if image -id "C:\Users\mulugetawa\OneDrive - Universitetet i Agder\UiA\Projects\AI4CITIZEN\LA3D\data\VISPR\2017_17368641.jpg" -anm adaptive_full_blur -odc person -ods 320 240 -odt 0.25 -s
-# python main.py -a an -if image -id "C:\Users\mulugetawa\OneDrive - Universitetet i Agder\UiA\Projects\AI4CITIZEN\LA3D\data\VISPR\2017_17368641.jpg" -anm adaptive_max_blur -odc person -ods 320 240 -odt 0.25 -s
-# python main.py -a an -if image -id "C:\Users\mulugetawa\OneDrive - Universitetet i Agder\UiA\Projects\AI4CITIZEN\LA3D\data\VISPR\2017_17368641.jpg" -anm pixelization -odc person -ods 320 240 -odt 0.25 -s
-# python main.py -a an -if image -id "C:\Users\mulugetawa\OneDrive - Universitetet i Agder\UiA\Projects\AI4CITIZEN\LA3D\data\VISPR\2017_17368641.jpg" -anm adaptive_pixelization -odc person -ods 320 240 -odt 0.25 -s
-# python main.py -a an -if image -id "C:\Users\mulugetawa\OneDrive - Universitetet i Agder\UiA\Projects\AI4CITIZEN\LA3D\data\VISPR\2017_17368641.jpg" -anm adaptive_max_pixelization -odc person -ods 320 240 -odt 0.25 -s
+# python main.py -a an -if image -is 320 240 -id "C:\Users\mulugetawa\OneDrive - Universitetet i Agder\UiA\Projects\AI4CITIZEN\LA3D\data\VISPR\2017_17368641.jpg" -anm no-an -odc person -ods 320 240 -odt 0.25 -v
+# python main.py -a an -if image -is 320 240 -id "C:\Users\mulugetawa\OneDrive - Universitetet i Agder\UiA\Projects\AI4CITIZEN\LA3D\data\VISPR\2017_17368641.jpg" -anm mask -odc person -ods 320 240 -odt 0.25 -v
+# python main.py -a an -if image -is 320 240 -id "C:\Users\mulugetawa\OneDrive - Universitetet i Agder\UiA\Projects\AI4CITIZEN\LA3D\data\VISPR\2017_17368641.jpg" -anm mask -odc person -ods 320 240 -odt 0.25 -s
+# python main.py -a an -if image -is 320 240 -id "C:\Users\mulugetawa\OneDrive - Universitetet i Agder\UiA\Projects\AI4CITIZEN\LA3D\data\VISPR\2017_17368641.jpg" -anm edge -odc person -ods 320 240 -odt 0.25 -s
+# python main.py -a an -if image -is 320 240 -id "C:\Users\mulugetawa\OneDrive - Universitetet i Agder\UiA\Projects\AI4CITIZEN\LA3D\data\VISPR\2017_17368641.jpg" -anm blur -odc person -ods 320 240 -odt 0.25 -s
+# python main.py -a an -if image -is 320 240 -id "C:\Users\mulugetawa\OneDrive - Universitetet i Agder\UiA\Projects\AI4CITIZEN\LA3D\data\VISPR\2017_17368641.jpg" -anm adaptive_blur -odc person -ods 320 240 -odt 0.25 -s
+# python main.py -a an -if image -is 320 240 -id "C:\Users\mulugetawa\OneDrive - Universitetet i Agder\UiA\Projects\AI4CITIZEN\LA3D\data\VISPR\2017_17368641.jpg" -anm adaptive_full_blur -odc person -ods 320 240 -odt 0.25 -s
+# python main.py -a an -if image -is 320 240 -id "C:\Users\mulugetawa\OneDrive - Universitetet i Agder\UiA\Projects\AI4CITIZEN\LA3D\data\VISPR\2017_17368641.jpg" -anm adaptive_max_blur -odc person -ods 320 240 -odt 0.25 -s
+# python main.py -a an -if image -is 320 240 -id "C:\Users\mulugetawa\OneDrive - Universitetet i Agder\UiA\Projects\AI4CITIZEN\LA3D\data\VISPR\2017_17368641.jpg" -anm pixelization -odc person -ods 320 240 -odt 0.25 -s
+# python main.py -a an -if image -is 320 240 -id "C:\Users\mulugetawa\OneDrive - Universitetet i Agder\UiA\Projects\AI4CITIZEN\LA3D\data\VISPR\2017_17368641.jpg" -anm adaptive_pixelization -odc person -ods 320 240 -odt 0.25 -s
+# python main.py -a an -if image -is 320 240 -id "C:\Users\mulugetawa\OneDrive - Universitetet i Agder\UiA\Projects\AI4CITIZEN\LA3D\data\VISPR\2017_17368641.jpg" -anm adaptive_max_pixelization -odc person -ods 320 240 -odt 0.25 -s
 
 # python main.py -a an -if video -id "C:\Users\mulugetawa\OneDrive - Universitetet i Agder\UiA\Projects\AI4CITIZEN\LA3D\data\UCF_Crime\Burglary033_x264.mp4" -anm mask -odc person -ods 320 240 -odt 0.25 -v 
 # python main.py -a an-ad -adm pel -ads ucf -if video -id  "C:\Users\mulugetawa\OneDrive - Universitetet i Agder\UiA\Projects\AI4CITIZEN\LA3D\data\UCF_Crime\Burglary033_x264.mp4" -anm no-an -odc person -ods 320 240 -odt 0.25 -s
@@ -374,6 +376,14 @@ if __name__ == '__main__':
 # python main.py -a an-ad -adm mgfn -ads ucf -if video -id  "C:\Users\mulugetawa\OneDrive - Universitetet i Agder\UiA\Projects\AI4CITIZEN\LA3D\data\UCF_Crime\Burglary033_x264.mp4" -anm adaptive_blur -odc person -ods 320 240 -odt 0.25 -s
 # python main.py -a an-ad -adm mgfn -ads ucf -if video -id  "C:\Users\mulugetawa\OneDrive - Universitetet i Agder\UiA\Projects\AI4CITIZEN\LA3D\data\UCF_Crime\Burglary033_x264.mp4" -anm pixelization -odc person -ods 320 240 -odt 0.25 -s
 # python main.py -a an-ad -adm mgfn -ads ucf -if video -id  "C:\Users\mulugetawa\OneDrive - Universitetet i Agder\UiA\Projects\AI4CITIZEN\LA3D\data\UCF_Crime\Burglary033_x264.mp4" -anm adaptive_pixelization -odc person -ods 320 240 -odt 0.25 -s
+
+
+# python main.py -a an-ad -adm pel -ads xd -if video -id  "C:\Users\mulugetawa\OneDrive - Universitetet i Agder\UiA\Projects\AI4CITIZEN\LA3D\data\XD_Violence\Fast.Five.2011__#00-32-56_00-33-26_label_B2-0-0.mp4" -anm no-an -odc person -ods 320 240 -odt 0.25 -s
+# python main.py -a an-ad -adm pel -ads xd -if video -id  "C:\Users\mulugetawa\OneDrive - Universitetet i Agder\UiA\Projects\AI4CITIZEN\LA3D\data\XD_Violence\Fast.Five.2011__#00-32-56_00-33-26_label_B2-0-0.mp4" -anm mask -odc person -ods 320 240 -odt 0.25 -s
+# python main.py -a an-ad -adm pel -ads xd -if video -id  "C:\Users\mulugetawa\OneDrive - Universitetet i Agder\UiA\Projects\AI4CITIZEN\LA3D\data\XD_Violence\Fast.Five.2011__#00-32-56_00-33-26_label_B2-0-0.mp4" -anm blur -odc person -ods 320 240 -odt 0.25 -s
+# python main.py -a an-ad -adm pel -ads xd -if video -id  "C:\Users\mulugetawa\OneDrive - Universitetet i Agder\UiA\Projects\AI4CITIZEN\LA3D\data\XD_Violence\Fast.Five.2011__#00-32-56_00-33-26_label_B2-0-0.mp4" -anm adaptive_blur -odc person -ods 320 240 -odt 0.25 -s
+# python main.py -a an-ad -adm pel -ads xd -if video -id  "C:\Users\mulugetawa\OneDrive - Universitetet i Agder\UiA\Projects\AI4CITIZEN\LA3D\data\XD_Violence\Fast.Five.2011__#00-32-56_00-33-26_label_B2-0-0.mp4" -anm pixelization -odc person -ods 320 240 -odt 0.25 -s
+# python main.py -a an-ad -adm pel -ads xd -if video -id  "C:\Users\mulugetawa\OneDrive - Universitetet i Agder\UiA\Projects\AI4CITIZEN\LA3D\data\XD_Violence\Fast.Five.2011__#00-32-56_00-33-26_label_B2-0-0.mp4" -anm adaptive_pixelization -odc person -ods 320 240 -odt 0.25 -s
 
 # python main.py -a an-ad -adm mgfn -ads xd -if video -id  "C:\Users\mulugetawa\OneDrive - Universitetet i Agder\UiA\Projects\AI4CITIZEN\LA3D\data\XD_Violence\Fast.Five.2011__#00-32-56_00-33-26_label_B2-0-0.mp4" -anm no-an -odc person -ods 320 240 -odt 0.25 -s
 # python main.py -a an-ad -adm mgfn -ads xd -if video -id  "C:\Users\mulugetawa\OneDrive - Universitetet i Agder\UiA\Projects\AI4CITIZEN\LA3D\data\XD_Violence\Fast.Five.2011__#00-32-56_00-33-26_label_B2-0-0.mp4" -anm mask -odc person -ods 320 240 -odt 0.25 -s
