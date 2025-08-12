@@ -1,3 +1,11 @@
+# =============================================================================
+# LA3D: Lightweight Anonymization (AN) and Video Anomaly Detection (VAD) System
+# =============================================================================
+# This script provides inference configuration for the PLE4VAD VAD model.
+# Author: Mulugeta Weldezgina Asres
+# Email: muleina2000@gmail.com
+# Date: May 2024
+# =============================================================================
 import os, sys
 current_path = os.path.abspath(os.path.dirname(__file__))
 model_path = os.path.abspath(os.path.dirname(current_path))

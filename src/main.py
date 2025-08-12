@@ -76,15 +76,16 @@ def an_ad_offline_result_presenter(axisANObj, axisADObj, video_frames: list) -> 
             ad_success, ad_scores = axisADObj.get_ad_status_offline(frames)
             print("AD: {:0.03f} secs".format(axisADObj.ad_proc_time))
 
-            ad_score_fig, ax = plt.subplots(figsize=(4, 2.5))
-            _  = ax.plot(ad_scores, label="VAD Score", color="blue")
-            _  = ax.plot([axisADObj.ad_thr]*len(ad_scores), label=f"VAD Threshold", color="gray", linestyle="--")
-            _  = ax.set_title(f"Anomaly Detection (dThr={axisADObj.ad_thr})", fontsize=10)
-            _  = plt.xlabel("Frames", fontsize=10)
-            _  = plt.ylabel("Value", fontsize=10)
-            _  = ax.legend(fontsize=8)
+            if ad_success:
+                ad_score_fig, ax = plt.subplots(figsize=(4, 2.5))
+                _ = ax.plot(ad_scores, label="VAD Score", color="blue")
+                _ = ax.plot([axisADObj.ad_thr]*len(ad_scores), label=f"VAD Threshold", color="gray", linestyle="--")
+                _ = ax.set_title(f"Anomaly Detection (dThr={axisADObj.ad_thr})", fontsize=10)
+                _ = plt.xlabel("Frames", fontsize=10)
+                _ = plt.ylabel("Value", fontsize=10)
+                _ = plt.ylim([0.0, 1.05])
+                _ = ax.legend(fontsize=8)
 
-            if ad_scores is not None:
                 ad_frame_list = []
                 for i, frame in enumerate(frames[:len(ad_scores)]):
                     frame = axisADObj.add_ad_status_to_frame(frame, ad_scores[i])
@@ -113,7 +114,7 @@ def app_init(app_mode, anony_method: str = "no-an", ad_method: str = "pel", **kw
 
     axisADObj = None
     if "ad" in app_mode:
-        axisADObj = video_ad_model_inference_engine(ad_modelname=ad_method, **kwargs)
+        axisADObj = video_ad_model_inference_engine(ad_method=ad_method, **kwargs)
 
     return axisANObj, axisADObj
 
@@ -344,25 +345,39 @@ if __name__ == '__main__':
 # python main.py -a an -if image -id "C:\Users\mulugetawa\OneDrive - Universitetet i Agder\UiA\Projects\AI4CITIZEN\LA3D\data\VISPR\2017_17368641.jpg" -anm adaptive_max_pixelization -odc person -ods 320 240 -odt 0.25 -s
 
 # python main.py -a an -if video -id "C:\Users\mulugetawa\OneDrive - Universitetet i Agder\UiA\Projects\AI4CITIZEN\LA3D\data\UCF_Crime\Burglary033_x264.mp4" -anm mask -odc person -ods 320 240 -odt 0.25 -v 
-# python main.py -a an-ad -ads ucf -if video -id  "C:\Users\mulugetawa\OneDrive - Universitetet i Agder\UiA\Projects\AI4CITIZEN\LA3D\data\UCF_Crime\Burglary033_x264.mp4" -anm no-an -odc person -ods 320 240 -odt 0.25 -s
-# python main.py -a an-ad -ads ucf -if video -id  "C:\Users\mulugetawa\OneDrive - Universitetet i Agder\UiA\Projects\AI4CITIZEN\LA3D\data\UCF_Crime\Burglary033_x264.mp4" -anm mask -odc person -ods 320 240 -odt 0.25 -s
-# python main.py -a an-ad -ads ucf -if video -id  "C:\Users\mulugetawa\OneDrive - Universitetet i Agder\UiA\Projects\AI4CITIZEN\LA3D\data\UCF_Crime\Burglary033_x264.mp4" -anm edge -odc person -ods 320 240 -odt 0.25 -s
-# python main.py -a an-ad -ads ucf -if video -id  "C:\Users\mulugetawa\OneDrive - Universitetet i Agder\UiA\Projects\AI4CITIZEN\LA3D\data\UCF_Crime\Burglary033_x264.mp4" -anm blur -odc person -ods 320 240 -odt 0.25 -s
-# python main.py -a an-ad -ads ucf -if video -id  "C:\Users\mulugetawa\OneDrive - Universitetet i Agder\UiA\Projects\AI4CITIZEN\LA3D\data\UCF_Crime\Burglary033_x264.mp4" -anm adaptive_blur -odc person -ods 320 240 -odt 0.25 -s
-# python main.py -a an-ad -ads ucf -if video -id  "C:\Users\mulugetawa\OneDrive - Universitetet i Agder\UiA\Projects\AI4CITIZEN\LA3D\data\UCF_Crime\Burglary033_x264.mp4" -anm adaptive_full_blur -odc person -ods 320 240 -odt 0.25 -s
-# python main.py -a an-ad -ads ucf -if video -id  "C:\Users\mulugetawa\OneDrive - Universitetet i Agder\UiA\Projects\AI4CITIZEN\LA3D\data\UCF_Crime\Burglary033_x264.mp4" -anm adaptive_max_blur -odc person -ods 320 240 -odt 0.25 -s
-# python main.py -a an-ad -ads ucf -if video -id  "C:\Users\mulugetawa\OneDrive - Universitetet i Agder\UiA\Projects\AI4CITIZEN\LA3D\data\UCF_Crime\Burglary033_x264.mp4" -anm pixelization -odc person -ods 320 240 -odt 0.25 -s
-# python main.py -a an-ad -ads ucf -if video -id  "C:\Users\mulugetawa\OneDrive - Universitetet i Agder\UiA\Projects\AI4CITIZEN\LA3D\data\UCF_Crime\Burglary033_x264.mp4" -anm adaptive_pixelization -odc person -ods 320 240 -odt 0.25 -s
-# python main.py -a an-ad -ads ucf -if video -id  "C:\Users\mulugetawa\OneDrive - Universitetet i Agder\UiA\Projects\AI4CITIZEN\LA3D\data\UCF_Crime\Burglary033_x264.mp4" -anm adaptive_max_pixelization -odc person -ods 320 240 -odt 0.25 -s
+# python main.py -a an-ad -adm pel -ads ucf -if video -id  "C:\Users\mulugetawa\OneDrive - Universitetet i Agder\UiA\Projects\AI4CITIZEN\LA3D\data\UCF_Crime\Burglary033_x264.mp4" -anm no-an -odc person -ods 320 240 -odt 0.25 -s
+# python main.py -a an-ad -adm pel -ads ucf -if video -id  "C:\Users\mulugetawa\OneDrive - Universitetet i Agder\UiA\Projects\AI4CITIZEN\LA3D\data\UCF_Crime\Burglary033_x264.mp4" -anm mask -odc person -ods 320 240 -odt 0.25 -s
+# python main.py -a an-ad -adm pel -ads ucf -if video -id  "C:\Users\mulugetawa\OneDrive - Universitetet i Agder\UiA\Projects\AI4CITIZEN\LA3D\data\UCF_Crime\Burglary033_x264.mp4" -anm edge -odc person -ods 320 240 -odt 0.25 -s
+# python main.py -a an-ad -adm pel -ads ucf -if video -id  "C:\Users\mulugetawa\OneDrive - Universitetet i Agder\UiA\Projects\AI4CITIZEN\LA3D\data\UCF_Crime\Burglary033_x264.mp4" -anm blur -odc person -ods 320 240 -odt 0.25 -s
+# python main.py -a an-ad -adm pel -ads ucf -if video -id  "C:\Users\mulugetawa\OneDrive - Universitetet i Agder\UiA\Projects\AI4CITIZEN\LA3D\data\UCF_Crime\Burglary033_x264.mp4" -anm adaptive_blur -odc person -ods 320 240 -odt 0.25 -s
+# python main.py -a an-ad -adm pel -ads ucf -if video -id  "C:\Users\mulugetawa\OneDrive - Universitetet i Agder\UiA\Projects\AI4CITIZEN\LA3D\data\UCF_Crime\Burglary033_x264.mp4" -anm adaptive_full_blur -odc person -ods 320 240 -odt 0.25 -s
+# python main.py -a an-ad -adm pel -ads ucf -if video -id  "C:\Users\mulugetawa\OneDrive - Universitetet i Agder\UiA\Projects\AI4CITIZEN\LA3D\data\UCF_Crime\Burglary033_x264.mp4" -anm adaptive_max_blur -odc person -ods 320 240 -odt 0.25 -s
+# python main.py -a an-ad -adm pel -ads ucf -if video -id  "C:\Users\mulugetawa\OneDrive - Universitetet i Agder\UiA\Projects\AI4CITIZEN\LA3D\data\UCF_Crime\Burglary033_x264.mp4" -anm pixelization -odc person -ods 320 240 -odt 0.25 -s
+# python main.py -a an-ad -adm pel -ads ucf -if video -id  "C:\Users\mulugetawa\OneDrive - Universitetet i Agder\UiA\Projects\AI4CITIZEN\LA3D\data\UCF_Crime\Burglary033_x264.mp4" -anm adaptive_pixelization -odc person -ods 320 240 -odt 0.25 -s
+# python main.py -a an-ad -adm pel -ads ucf -if video -id  "C:\Users\mulugetawa\OneDrive - Universitetet i Agder\UiA\Projects\AI4CITIZEN\LA3D\data\UCF_Crime\Burglary033_x264.mp4" -anm adaptive_max_pixelization -odc person -ods 320 240 -odt 0.25 -s
 
 # python main.py -a an -if video -id "C:\Users\mulugetawa\OneDrive - Universitetet i Agder\UiA\Projects\AI4CITIZEN\LA3D\data\XD_Violence\Fast.Five.2011__#00-32-56_00-33-26_label_B2-0-0.mp4" -anm mask -odc person -ods 320 240 -odt 0.25 -v 
-# python main.py -a an-ad -ads xd -if video -id  "C:\Users\mulugetawa\OneDrive - Universitetet i Agder\UiA\Projects\AI4CITIZEN\LA3D\data\XD_Violence\Fast.Five.2011__#00-32-56_00-33-26_label_B2-0-0.mp4" -anm no-an -odc person -ods 320 240 -odt 0.25 -s
-# python main.py -a an-ad -ads xd -if video -id  "C:\Users\mulugetawa\OneDrive - Universitetet i Agder\UiA\Projects\AI4CITIZEN\LA3D\data\XD_Violence\Fast.Five.2011__#00-32-56_00-33-26_label_B2-0-0.mp4" -anm mask -odc person -ods 320 240 -odt 0.25 -s
-# python main.py -a an-ad -ads xd -if video -id  "C:\Users\mulugetawa\OneDrive - Universitetet i Agder\UiA\Projects\AI4CITIZEN\LA3D\data\XD_Violence\Fast.Five.2011__#00-32-56_00-33-26_label_B2-0-0.mp4" -anm edge -odc person -ods 320 240 -odt 0.25 -s
-# python main.py -a an-ad -ads xd -if video -id  "C:\Users\mulugetawa\OneDrive - Universitetet i Agder\UiA\Projects\AI4CITIZEN\LA3D\data\XD_Violence\Fast.Five.2011__#00-32-56_00-33-26_label_B2-0-0.mp4" -anm blur -odc person -ods 320 240 -odt 0.25 -s
-# python main.py -a an-ad -ads xd -if video -id  "C:\Users\mulugetawa\OneDrive - Universitetet i Agder\UiA\Projects\AI4CITIZEN\LA3D\data\XD_Violence\Fast.Five.2011__#00-32-56_00-33-26_label_B2-0-0.mp4" -anm adaptive_blur -odc person -ods 320 240 -odt 0.25 -s
-# python main.py -a an-ad -ads xd -if video -id  "C:\Users\mulugetawa\OneDrive - Universitetet i Agder\UiA\Projects\AI4CITIZEN\LA3D\data\XD_Violence\Fast.Five.2011__#00-32-56_00-33-26_label_B2-0-0.mp4" -anm adaptive_full_blur -odc person -ods 320 240 -odt 0.25 -s
-# python main.py -a an-ad -ads xd -if video -id  "C:\Users\mulugetawa\OneDrive - Universitetet i Agder\UiA\Projects\AI4CITIZEN\LA3D\data\XD_Violence\Fast.Five.2011__#00-32-56_00-33-26_label_B2-0-0.mp4" -anm adaptive_max_blur -odc person -ods 320 240 -odt 0.25 -s
-# python main.py -a an-ad -ads xd -if video -id  "C:\Users\mulugetawa\OneDrive - Universitetet i Agder\UiA\Projects\AI4CITIZEN\LA3D\data\XD_Violence\Fast.Five.2011__#00-32-56_00-33-26_label_B2-0-0.mp4" -anm pixelization -odc person -ods 320 240 -odt 0.25 -s
-# python main.py -a an-ad -ads xd -if video -id  "C:\Users\mulugetawa\OneDrive - Universitetet i Agder\UiA\Projects\AI4CITIZEN\LA3D\data\XD_Violence\Fast.Five.2011__#00-32-56_00-33-26_label_B2-0-0.mp4" -anm adaptive_pixelization -odc person -ods 320 240 -odt 0.25 -s
-# python main.py -a an-ad -ads xd -if video -id  "C:\Users\mulugetawa\OneDrive - Universitetet i Agder\UiA\Projects\AI4CITIZEN\LA3D\data\XD_Violence\Fast.Five.2011__#00-32-56_00-33-26_label_B2-0-0.mp4" -anm adaptive_max_pixelization -odc person -ods 320 240 -odt 0.25 -s
+# python main.py -a an-ad -adm pel -ads xd -if video -id  "C:\Users\mulugetawa\OneDrive - Universitetet i Agder\UiA\Projects\AI4CITIZEN\LA3D\data\XD_Violence\Fast.Five.2011__#00-32-56_00-33-26_label_B2-0-0.mp4" -anm no-an -odc person -ods 320 240 -odt 0.25 -s
+# python main.py -a an-ad -adm pel -ads xd -if video -id  "C:\Users\mulugetawa\OneDrive - Universitetet i Agder\UiA\Projects\AI4CITIZEN\LA3D\data\XD_Violence\Fast.Five.2011__#00-32-56_00-33-26_label_B2-0-0.mp4" -anm mask -odc person -ods 320 240 -odt 0.25 -s
+# python main.py -a an-ad -adm pel -ads xd -if video -id  "C:\Users\mulugetawa\OneDrive - Universitetet i Agder\UiA\Projects\AI4CITIZEN\LA3D\data\XD_Violence\Fast.Five.2011__#00-32-56_00-33-26_label_B2-0-0.mp4" -anm edge -odc person -ods 320 240 -odt 0.25 -s
+# python main.py -a an-ad -adm pel -ads xd -if video -id  "C:\Users\mulugetawa\OneDrive - Universitetet i Agder\UiA\Projects\AI4CITIZEN\LA3D\data\XD_Violence\Fast.Five.2011__#00-32-56_00-33-26_label_B2-0-0.mp4" -anm blur -odc person -ods 320 240 -odt 0.25 -s
+# python main.py -a an-ad -adm pel -ads xd -if video -id  "C:\Users\mulugetawa\OneDrive - Universitetet i Agder\UiA\Projects\AI4CITIZEN\LA3D\data\XD_Violence\Fast.Five.2011__#00-32-56_00-33-26_label_B2-0-0.mp4" -anm adaptive_blur -odc person -ods 320 240 -odt 0.25 -s
+# python main.py -a an-ad -adm pel -ads xd -if video -id  "C:\Users\mulugetawa\OneDrive - Universitetet i Agder\UiA\Projects\AI4CITIZEN\LA3D\data\XD_Violence\Fast.Five.2011__#00-32-56_00-33-26_label_B2-0-0.mp4" -anm adaptive_full_blur -odc person -ods 320 240 -odt 0.25 -s
+# python main.py -a an-ad -adm pel -ads xd -if video -id  "C:\Users\mulugetawa\OneDrive - Universitetet i Agder\UiA\Projects\AI4CITIZEN\LA3D\data\XD_Violence\Fast.Five.2011__#00-32-56_00-33-26_label_B2-0-0.mp4" -anm adaptive_max_blur -odc person -ods 320 240 -odt 0.25 -s
+# python main.py -a an-ad -adm pel -ads xd -if video -id  "C:\Users\mulugetawa\OneDrive - Universitetet i Agder\UiA\Projects\AI4CITIZEN\LA3D\data\XD_Violence\Fast.Five.2011__#00-32-56_00-33-26_label_B2-0-0.mp4" -anm pixelization -odc person -ods 320 240 -odt 0.25 -s
+# python main.py -a an-ad -adm pel -ads xd -if video -id  "C:\Users\mulugetawa\OneDrive - Universitetet i Agder\UiA\Projects\AI4CITIZEN\LA3D\data\XD_Violence\Fast.Five.2011__#00-32-56_00-33-26_label_B2-0-0.mp4" -anm adaptive_pixelization -odc person -ods 320 240 -odt 0.25 -s
+# python main.py -a an-ad -adm pel -ads xd -if video -id  "C:\Users\mulugetawa\OneDrive - Universitetet i Agder\UiA\Projects\AI4CITIZEN\LA3D\data\XD_Violence\Fast.Five.2011__#00-32-56_00-33-26_label_B2-0-0.mp4" -anm adaptive_max_pixelization -odc person -ods 320 240 -odt 0.25 -s
+
+# python main.py -a an-ad -adm mgfn -ads ucf -if video -id  "C:\Users\mulugetawa\OneDrive - Universitetet i Agder\UiA\Projects\AI4CITIZEN\LA3D\data\UCF_Crime\Burglary033_x264.mp4" -anm no-an -odc person -ods 320 240 -odt 0.25 -s
+# python main.py -a an-ad -adm mgfn -ads ucf -if video -id  "C:\Users\mulugetawa\OneDrive - Universitetet i Agder\UiA\Projects\AI4CITIZEN\LA3D\data\UCF_Crime\Burglary033_x264.mp4" -anm mask -odc person -ods 320 240 -odt 0.25 -s
+# python main.py -a an-ad -adm mgfn -ads ucf -if video -id  "C:\Users\mulugetawa\OneDrive - Universitetet i Agder\UiA\Projects\AI4CITIZEN\LA3D\data\UCF_Crime\Burglary033_x264.mp4" -anm blur -odc person -ods 320 240 -odt 0.25 -s
+# python main.py -a an-ad -adm mgfn -ads ucf -if video -id  "C:\Users\mulugetawa\OneDrive - Universitetet i Agder\UiA\Projects\AI4CITIZEN\LA3D\data\UCF_Crime\Burglary033_x264.mp4" -anm adaptive_blur -odc person -ods 320 240 -odt 0.25 -s
+# python main.py -a an-ad -adm mgfn -ads ucf -if video -id  "C:\Users\mulugetawa\OneDrive - Universitetet i Agder\UiA\Projects\AI4CITIZEN\LA3D\data\UCF_Crime\Burglary033_x264.mp4" -anm pixelization -odc person -ods 320 240 -odt 0.25 -s
+# python main.py -a an-ad -adm mgfn -ads ucf -if video -id  "C:\Users\mulugetawa\OneDrive - Universitetet i Agder\UiA\Projects\AI4CITIZEN\LA3D\data\UCF_Crime\Burglary033_x264.mp4" -anm adaptive_pixelization -odc person -ods 320 240 -odt 0.25 -s
+
+# python main.py -a an-ad -adm mgfn -ads xd -if video -id  "C:\Users\mulugetawa\OneDrive - Universitetet i Agder\UiA\Projects\AI4CITIZEN\LA3D\data\XD_Violence\Fast.Five.2011__#00-32-56_00-33-26_label_B2-0-0.mp4" -anm no-an -odc person -ods 320 240 -odt 0.25 -s
+# python main.py -a an-ad -adm mgfn -ads xd -if video -id  "C:\Users\mulugetawa\OneDrive - Universitetet i Agder\UiA\Projects\AI4CITIZEN\LA3D\data\XD_Violence\Fast.Five.2011__#00-32-56_00-33-26_label_B2-0-0.mp4" -anm mask -odc person -ods 320 240 -odt 0.25 -s
+# python main.py -a an-ad -adm mgfn -ads xd -if video -id  "C:\Users\mulugetawa\OneDrive - Universitetet i Agder\UiA\Projects\AI4CITIZEN\LA3D\data\XD_Violence\Fast.Five.2011__#00-32-56_00-33-26_label_B2-0-0.mp4" -anm blur -odc person -ods 320 240 -odt 0.25 -s
+# python main.py -a an-ad -adm mgfn -ads xd -if video -id  "C:\Users\mulugetawa\OneDrive - Universitetet i Agder\UiA\Projects\AI4CITIZEN\LA3D\data\XD_Violence\Fast.Five.2011__#00-32-56_00-33-26_label_B2-0-0.mp4" -anm adaptive_blur -odc person -ods 320 240 -odt 0.25 -s
+# python main.py -a an-ad -adm mgfn -ads xd -if video -id  "C:\Users\mulugetawa\OneDrive - Universitetet i Agder\UiA\Projects\AI4CITIZEN\LA3D\data\XD_Violence\Fast.Five.2011__#00-32-56_00-33-26_label_B2-0-0.mp4" -anm pixelization -odc person -ods 320 240 -odt 0.25 -s
+# python main.py -a an-ad -adm mgfn -ads xd -if video -id  "C:\Users\mulugetawa\OneDrive - Universitetet i Agder\UiA\Projects\AI4CITIZEN\LA3D\data\XD_Violence\Fast.Five.2011__#00-32-56_00-33-26_label_B2-0-0.mp4" -anm adaptive_pixelization -odc person -ods 320 240 -odt 0.25 -s

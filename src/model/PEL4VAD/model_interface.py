@@ -1,34 +1,36 @@
-from torch.utils.data import DataLoader
-import matplotlib.pyplot as plt
-import torch
-from sklearn.metrics import auc, roc_curve, precision_recall_curve
-from tqdm import tqdm
+# =============================================================================
+# LA3D: Lightweight Anonymization (AN) and Video Anomaly Detection (VAD) System
+# =============================================================================
+# This script provides interfacing to the PEL4VAD VAD model.
+# It includes functions to load the model, perform predictions, and handle configurations.
+# Author: Mulugeta Weldezgina Asres
+# Email: muleina2000@gmail.com
+# Date: May 2024
+# =============================================================================
 import os, sys
+import torch
 import numpy as np
 current_path = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(current_path)
 
-
-# from config import *
-# from .models.mgfn import mgfn as Model
-# from .datasets.dataset import Dataset
-
-sys.path.append(r"C:\Users\mulugetawa\OneDrive - Universitetet i Agder\UiA\Projects\AI4CITIZEN\CodeSources\PEL4VAD")
 import configs
-from .test import test_func
 from .model import XModel
-from .dataset import UCFDataset, XDataset, SHDataset
-from torch.utils.data import DataLoader
-
 
 def load_model(filepath, datasource="xd", **kwargs):
+    """Load the XModel from a specified file path.
+
+    Args:
+        filepath (str): Path to the model checkpoint file.
+        datasource (str): Source of the data, used to build the configuration.
+        **kwargs: Additional keyword arguments for model initialization.
+    Returns:
+        XModel: An instance of the XModel with loaded weights.
+    """
     if os.path.isfile(filepath):
         print('loading pretrained checkpoint from {}.'.format(filepath))
         cfg = configs.build_config(datasource)
         model = XModel(cfg)
-        # print(model)
         weight_dict = torch.load(filepath)
-        # print(weight_dict)
         model_dict = model.state_dict()
         for name, param in weight_dict.items():
             if 'module' in name:
@@ -42,28 +44,35 @@ def load_model(filepath, datasource="xd", **kwargs):
             else:
                print('{} not found in model dict.'.format(name))
     else:
-       print('Not found pretrained checkpoint file.')
-    
+        raise FileNotFoundError(f'Model file {filepath} not found.')
     return model
 
-def get_frames(videofilepath):
-    return videofilepath
+def predict(data, model, frequency: int = 16, smooth: str = None,  device: str = "cuda") -> np.ndarray:
+    """Predict the anomaly scores for the input data using the XModel.
 
-def predict(data, model, frequency=16, smooth=None, device="cuda"):
-    model = model.to(device)
+    Args:       
+        data (torch.Tensor): Input data tensor of shape (batch_size, channels, height, width).
+        model (XModel): The XModel instance.
+        frequency (int): Frequency for repeating the predictions.
+        smooth (str): Smoothing method to apply to the predictions ('fixed', 'slide', or None).
+        device (str): Device to run the model on ('cuda' or 'cpu').
+    Returns:
+        np.ndarray: Anomaly scores for the input data, repeated according to the frequency.
+    """
+    if device is None:
+        device = next(model.parameters()).device
+    else:
+        device = device if torch.cuda.is_available() else "cpu"
+        model = model.to(device)
+
     model.eval()
-    pred = torch.zeros(0)
-
-    data = data.permute((1, 0, 2))
+    data = data.permute((1, 0, 2)).float().to(device)
+    pred = torch.zeros(0).to(device)
     with torch.no_grad():
-        data = data.float().to(device)
         seq_len = [data.shape[1]]*data.shape[0]
-        # print("seq_len: ", seq_len, data.shape)
-
         logits, _ = model(data, seq_len)
         logits = torch.mean(logits, 0)
         logits = logits.squeeze(dim=-1)
-
         seq = len(logits)
         # if smooth == 'fixed':
         #     logits = fixed_smooth(logits, cfg.kappa)
@@ -72,74 +81,7 @@ def predict(data, model, frequency=16, smooth=None, device="cuda"):
         # else:
         #     pass
         pred = logits[:seq]
-
-        # print("pred.shape: ", pred.shape)
-
-        pred = list(pred.cpu().detach().numpy())
-    
-        pred = np.repeat(np.array(pred), frequency)
-        # print("pred.shape: ", pred.shape)
-
-        return pred
+    pred = list(pred.cpu().detach().numpy())
+    pred = np.repeat(np.array(pred), frequency)
+    return pred
         
-def eval(dataloader, model, args):
-    with torch.no_grad():
-        pred = torch.zeros(0)
-        featurelen =[]
-        for i, inputs in tqdm(enumerate(dataloader)):
-            sig = np.load()
-            pred = torch.cat((pred, sig))
-
-        gt = np.load(args.gt)
-        # pred = list(pred.cpu().detach().numpy())
-        # pred = np.repeat(np.array(pred), 16)
-        fpr, tpr, threshold = roc_curve(list(gt), pred)
-        rec_auc = auc(fpr, tpr)
-        precision, recall, th = precision_recall_curve(list(gt), pred)
-        pr_auc = auc(recall, precision)
-        print('pr_auc : ' + str(pr_auc))
-        print('rec_auc : ' + str(rec_auc))
-        return rec_auc, pr_auc
-
-
-def test(dataloader, model, args, device):
-    plt.clf()
-    with torch.no_grad():
-        model.eval()
-        pred = torch.zeros(0)
-        featurelen =[]
-        for i, inputs in tqdm(enumerate(dataloader)):
-
-            input = inputs[0].to(device)
-            input = input.permute(0, 2, 1, 3)
-            _, _, _, _, logits = model(input)
-            logits = torch.squeeze(logits, 1)
-            logits = torch.mean(logits, 0)
-            sig = logits
-            featurelen.append(len(sig))
-            pred = torch.cat((pred, sig))
-
-        gt = np.load(args.gt)
-        pred = list(pred.cpu().detach().numpy())
-        pred = np.repeat(np.array(pred), 16)
-        fpr, tpr, threshold = roc_curve(list(gt), pred)
-        rec_auc = auc(fpr, tpr)
-        precision, recall, th = precision_recall_curve(list(gt), pred)
-        pr_auc = auc(recall, precision)
-        print('pr_auc : ' + str(pr_auc))
-        print('rec_auc : ' + str(rec_auc))
-        return rec_auc, pr_auc
-
-if __name__ == '__main__':
-    # args = option.parse_args()
-    # config = Config(args)
-    # device = torch.device("cuda")
-    # model = Model()
-    # test_filepath = DataLoader(Dataset(args, test_mode=True),
-    #                           batch_size=1, shuffle=False,
-    #                           num_workers=0, pin_memory=False)
-    # data = get_frames(test_filepath)
-    # model = model.to(device)
-    # model.load_state_dict({k.replace('module.', ''): v for k, v in torch.load('mgfn_ucf.pkl').items()})
-    # auc = predict(data, model, args, device)
-    pass

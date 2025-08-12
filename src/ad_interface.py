@@ -36,9 +36,10 @@ from model.MGFN import model_interface as mgfn_interface
 # Visualization Parameters for VAD Panel
 # -----------------------------------------------------------------------------
 AD_TEXT = "AD: {0:0.2f} Alert: "
+TOP_PAD = 10
 R = 4
 TEXT_OFFSET = len(AD_TEXT)+R
-FLAG_COORDS = [(TEXT_OFFSET*R, 30), (TEXT_OFFSET*R+2*R, 30), (TEXT_OFFSET*R+4*R, 30)]
+FLAG_COORDS = [(TEXT_OFFSET*R, TOP_PAD), (TEXT_OFFSET*R+2*R, TOP_PAD), (TEXT_OFFSET*R+4*R, TOP_PAD)]
 TEXT_FACE = cv2.FONT_HERSHEY_SIMPLEX
 TEXT_SCALE = 0.09*R
 TEXT_THICKNESS = 0
@@ -112,8 +113,7 @@ class VideoFeatureExtractor():
         """
         data = F.to_pil_image(frame_file)
         data = data.resize(self.target_resolution, Image.LANCZOS) # WxH
-        data = np.asarray(data)
-        data = data.astype(float)
+        data = np.asarray(data).astype(np.float64)
         if isinstance(self.extractor_model, I3D): # for d=1024
             data = (data * 2.0/255.0) - 1
             assert(data.max()<=1.0)
@@ -126,7 +126,7 @@ class VideoFeatureExtractor():
             normalizer_mean = np.array(mean)[np.newaxis, np.newaxis,...]
             normalizer_std = np.array(std)[np.newaxis, np.newaxis,...]
             data = (data - normalizer_mean)/normalizer_std
-        return data
+        return data.astype("float32")
 
     def prepare_rgb_batch(self, rgb_files: np.ndarray, frame_indices: np.ndarray) -> np.ndarray:
         """
@@ -139,7 +139,7 @@ class VideoFeatureExtractor():
         Returns:
             np.ndarray: Batch data [batch, frequency, h, w, 3].
         """
-        batch_data = np.zeros(frame_indices.shape + self.target_resolution[::-1] + (3,))
+        batch_data = np.zeros(frame_indices.shape + self.target_resolution[::-1] + (3,), dtype=np.float32)
         for i in range(frame_indices.shape[0]):
             for j in range(frame_indices.shape[1]):
                 batch_data[i,j,:,:,:] = self.load_frame(rgb_files[frame_indices[i][j]])
@@ -155,18 +155,18 @@ class VideoFeatureExtractor():
         Returns:
             list: List of oversampled and cropped data arrays.
         """
-        data_1 = np.array(data[:, :, :224, :224, :])
-        data_2 = np.array(data[:, :, :224, -224:, :])
-        data_3 = np.array(data[:, :, 16:240, 58:282, :])
-        data_4 = np.array(data[:, :, -224:, :224, :])
-        data_5 = np.array(data[:, :, -224:, -224:, :])
+        data_1 = data[:, :, :224, :224, :].copy()
+        data_2 = data[:, :, :224, -224:, :].copy()
+        data_3 = data[:, :, 16:240, 58:282, :].copy()
+        data_4 = data[:, :, -224:, :224, :].copy()
+        data_5 = data[:, :, -224:, -224:, :].copy()
         if self.sample_T == 10:
-            data_flip = np.array(data[:,:,:,::-1,:])
-            data_f_1 = np.array(data_flip[:, :, :224, :224, :])
-            data_f_2 = np.array(data_flip[:, :, :224, -224:, :])
-            data_f_3 = np.array(data_flip[:, :, 16:240, 58:282, :])
-            data_f_4 = np.array(data_flip[:, :, -224:, :224, :])
-            data_f_5 = np.array(data_flip[:, :, -224:, -224:, :])
+            data_flip = data[:,:,:,::-1,:].copy()
+            data_f_1 = data_flip[:, :, :224, :224, :].copy()
+            data_f_2 = data_flip[:, :, :224, -224:, :].copy()
+            data_f_3 = data_flip[:, :, 16:240, 58:282, :].copy()
+            data_f_4 = data_flip[:, :, -224:, :224, :].copy()
+            data_f_5 = data_flip[:, :, -224:, -224:, :].copy()
             return [data_1, data_2, data_3, data_4, data_5,
                 data_f_1, data_f_2, data_f_3, data_f_4, data_f_5]
         else:
@@ -217,7 +217,6 @@ class VideoFeatureExtractor():
             frame_indices.append([j for j in range(i * self.frequency, i * self.frequency + chunk_size)])
         frame_indices = np.array(frame_indices)
         chunk_num = frame_indices.shape[0]
-
         batch_size = min(chunk_num, batch_size)
         batch_num = int(np.ceil(chunk_num / batch_size))    # Chunks to batches
         frame_indices = np.array_split(frame_indices, batch_num, axis=0)
@@ -256,7 +255,7 @@ class VideoFeatureExtractor():
         print("obtained features of size: ", features.shape)
         if features.ndim < 3:
             features = np.expand_dims(features, axis=1)
-        mag = np.linalg.norm(features, axis=2)[:,:, np.newaxis]
+        mag = np.linalg.norm(features.astype("float64"), axis=2)[:,:, np.newaxis].astype("float32")
         features = np.concatenate((features, mag),axis = 2)
         print("done in {} sec, features shape: {}.".format(time.time() - startime, features.shape))
         return features
@@ -266,14 +265,14 @@ class VADetector():
     VAD Integration Engine.
     Handles initialization and inference for video anomaly detection models.
     """
-    def __init__(self, ad_modelname: str, kwargs_ad_method: dict = {}, device : str = "cuda", **kwargs):
-        self.ad_modelname = ad_modelname
+    def __init__(self, ad_method: str = "pel", kwargs_ad_method: dict = {}, device : str = "cuda", **kwargs):
+        self.ad_method = ad_method
         self.ad_model_src = kwargs_ad_method.get("ad_model_src", cfg.ad_model_src)
         self.enc_frequency = kwargs_ad_method.get("enc_frequency", cfg.enc_vid_enc_frame_seq_size)
         self.ad_thr = kwargs_ad_method.get("ad_thr", cfg.ad_thr)
         self.device = device if torch.cuda.is_available() else "cpu"
         
-        if ad_modelname in ["pel"]:
+        if self.ad_method in ["pel"]:
             # Initialize PEL4VAD model and feature extractor
             _pel4vad_cfg = pel4vad_configs.build_config(self.ad_model_src)
             self.objVADModel = pel4vad_interface.load_model(_pel4vad_cfg.ckpt_path, datasource=self.ad_model_src).to(self.device)
@@ -282,19 +281,19 @@ class VADetector():
             self.vidfeature_i3d_extractor = VideoFeatureExtractor(pretrainedpath=rf"{_pel4vad_cfg.enc_vid_model_filepath}", 
                                                             frequency=self.enc_frequency, feature_dim=_pel4vad_cfg.enc_vid_feature_dim, sample_T=_pel4vad_cfg.enc_vid_num_crops)
             
-            self.predict = lambda x: pel4vad_interface.predict(torch.tensor(x[:, :, :-1], dtype=torch.float32), self.objVADModel, frequency=self.vidfeature_i3d_extractor.frequency)
+            self.predict = lambda x: pel4vad_interface.predict(torch.tensor(x[:, :, :-1], dtype=torch.float32).to(self.device), self.objVADModel, frequency=self.vidfeature_i3d_extractor.frequency, device=self.device)
 
-        elif ad_modelname in ["mgfn"]:
+        elif self.ad_method in ["mgfn"]:
             # Initialize MGFN model and feature extractor            
             _mgfn_cfg = mgfn_configs.build_config(self.ad_model_src)
-            self.objVADModel = mgfn_interface.load_model(filepath=_mgfn_cfg.ckpt_path, channels=_mgfn_cfg.feature_dim).to(self.device)
+            self.objVADModel = mgfn_interface.load_model(filepath=_mgfn_cfg.ckpt_path, channels=_mgfn_cfg.enc_vid_feature_dim).to(self.device)
             self.objVADModel.eval()
             self.vidfeature_i3d_extractor = VideoFeatureExtractor(pretrainedpath=rf"{_mgfn_cfg.enc_vid_model_filepath}", 
                                                             frequency=self.enc_frequency, feature_dim=_mgfn_cfg.enc_vid_feature_dim, sample_T=_mgfn_cfg.enc_vid_num_crops)
             
-            self.predict = lambda x: mgfn_interface.predict(torch.tensor(x, dtype=torch.float32).unsqueeze(0).unsqueeze(0), self.objVADModel, frequency=self.vidfeature_i3d_extractor.frequency, device=self.device)
+            self.predict = lambda x: mgfn_interface.predict(torch.tensor(x, dtype=torch.float32).unsqueeze(0).unsqueeze(0).to(self.device), self.objVADModel, frequency=self.vidfeature_i3d_extractor.frequency, device=self.device)
         else:
-            raise "Undefined ad_modelname!"
+            raise f"Undefined ad_method: {self.ad_method}!"
 
     def inference(self, video_frames: np.ndarray) -> tuple[bool, np.ndarray | None, np.ndarray]:
         """
@@ -360,7 +359,6 @@ class ADInference():
                 return ad_success, ad_scores
             else:
                 return False, None
-
         except Exception as ex:
             print(f"{ex}")
             return False, None
@@ -374,6 +372,7 @@ class ADInference():
         Returns:
             frame: Frame with overlay.
         """
+        frame = util.image_resize(frame, [320, 240], mode="cv", ref="wh")
         frame = cv2.rectangle(frame, STATUS_REC_COORDS[0], STATUS_REC_COORDS[1], (127, 127, 127), -1) # add status panel
         ad_flag_color = (255,0,0) if ad_score >= self.ad_thr else (0,255,0)
         for i in range(3):
