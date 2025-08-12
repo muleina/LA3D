@@ -58,10 +58,11 @@ $G^0$: baseline Guassian, $G^a$: adaptive Guassian, $G^a_{max}$: adaptive maximu
 <!-- START doctoc -->
 **Table of Contents**
 - [Installation](https://github.com/muleina/LA3D#installation)
-- [Usage](https://github.com/muleina/LA3D#usage)
+- [Usage \[CLI\]](https://github.com/muleina/LA3D#usage-[cli])
   - [LA3D: Real-Time AN using Webcam](https://github.com/muleina/LA3D#LA3D:-Real-Time-AN-using-Webcam)
   - [LA3D: AN on Images](https://github.com/muleina/LA3D#LA3D:-AN-on-Images)
   - [LA3D: AN-VAD on Videos](https://github.com/muleina/LA3D#LA3D:-AN-VAD-on-Videos)
+- [Usage \[Notebook\]](https://github.com/muleina/LA3D#usage-[notebook])
 - [Examples](https://github.com/muleina/LA3D#Examples)
   - [AN Enhancement using our Adaptive Approach](https://github.com/muleina/LA3D#AN-Enhancement-using-our-Adaptive-Approach)
   - [AN Trade-offs on VAD](https://github.com/muleina/LA3D#AN-Trade-offs-on-VAD)
@@ -75,59 +76,90 @@ $G^0$: baseline Guassian, $G^a$: adaptive Guassian, $G^a_{max}$: adaptive maximu
 
 ## Installation
 
-    conda env create -f environment.yml
+   
     # Clone the repo.
     git clone https://github.com/muleina/LA3D.git && cd LA3D
 
     # Download the model checkpoints from [here](https://drive.google.com/drive/folders/1EVZFgQJKvNVhUkrcdHYb7LvMWBGCGkPv?usp=drive_link). 
     # Store the models in /src/models/{'MODEL NAME'}/. Keep the path structure for each model as the download repository.
 
+        |-LA3D/
+            |-src/
+                |-model/
+                    |-OBJECT_DETECTOR/
+                        |-yolo/
+                    |-VIDEO_ENCODER_RESNET_1024/
+                        |-models/
+                            |-i3d/
+                                |-ckpt/
+                    |-VIDEO_ENCODER_RESNET_2048/
+                        |-ckpt/
+                    |-PEL4VAD/
+                        |-ckpt/
+                    |-MGFN
+                        |-ckpt/
+
+    # Anaconda install options: using yml
+    conda env create -f conda_environment.yml
+
+    # Anaconda install options: using txt
+    conda create --name la3d --file conda_requirements.txt
+
     # Pip install to existing environment.
     pip install -r pip_requirements.txt
-
-    # Anaconda install options.
-    conda create --name la3d --file conda_requirements.txt
 
     # The setup configurations of the LA3D are given in the config/config.py file.
 
     <!--  -->
 
-## Usage
+## Usage \[CLI\]
 
-The app testing parameters can be supplied through the main.py. 
+The LA3D app testing parameters can be supplied through the main.py. 
 
 Real-time processing through webcam and offline processing from image or video files are supported.
 
   ### LA3D: Real-Time AN using Webcam
-    python main.py -a an -if webcam -anm mask -odc person -ods 320 240 -odt 0.25 -v
-    python main.py -a an -if webcam -anm no-an -odc person -ods 320 240 -odt 0.25 -v
-    python main.py -a an -if webcam -anm edge -odc person -ods 320 240 -odt 0.25 -v
-    python main.py -a an -if webcam -anm blur -odc person -ods 320 240 -odt 0.25 -v
-    python main.py -a an -if webcam -anm adaptive_blur -odc person -ods 320 240 -odt 0.25 -v
-    python main.py -a an -if webcam -anm adaptive_full_blur -odc person -ods 320 240 -odt 0.25 -v
-    python main.py -a an -if webcam -anm adaptive_max_blur -odc person -ods 320 240 -odt 0.25 -v
-    python main.py -a an -if webcam -anm pixelization -odc person -ods 320 240 -odt 0.25 -v
-    python main.py -a an -if webcam -anm adaptive_pixelization -odc person -ods 320 240 -odt 0.25 -v
-    python main.py -a an -if webcam -anm adaptive_max_pixelization -odc person -ods 320 240 -odt 0.25 -v
+    python main.py -a an -if webcam -is 320 240 -anm mask -odc person -ods 320 240 -odt 0.25 -v
+    python main.py -a an -if webcam -is 320 240 -anm no-an -odc person -ods 320 240 -odt 0.25 -v
+    python main.py -a an -if webcam -is 320 240 -anm edge -odc person -ods 320 240 -odt 0.25 -v
+    python main.py -a an -if webcam -is 320 240 -anm blur -odc person -ods 320 240 -odt 0.25 -v
+    python main.py -a an -if webcam -is 320 240 -anm adaptive_blur -odc person -ods 320 240 -odt 0.25 -v
+    python main.py -a an -if webcam -is 320 240 -anm adaptive_full_blur -odc person -ods 320 240 -odt 0.25 -v
+    python main.py -a an -if webcam -is 320 240 -anm adaptive_max_blur -odc person -ods 320 240 -odt 0.25 -v
+    python main.py -a an -if webcam -is 320 240 -anm pixelization -odc person -ods 320 240 -odt 0.25 -v
+    python main.py -a an -if webcam -is 320 240 -anm adaptive_pixelization -odc person -ods 320 240 -odt 0.25 -v
+    python main.py -a an -if webcam -is 320 240 -anm adaptive_max_pixelization -odc person -ods 320 240 -odt 0.25 -v
     
   ### LA3D: AN on Images
-    python main.py -a an -if image -id "{add here the main_path}/data/VISPR/2017_17368641.jpg" -anm no-an -odc person -ods 320 240 -odt 0.25 -v
-    python main.py -a an -if image -id "{add here the main_path}/data/VISPR/2017_17368641.jpg" -anm mask -odc person -ods 320 240 -odt 0.25 -s
-    python main.py -a an -if image -id "{add here the main_path}/data/VISPR/2017_17368641.jpg" -anm blur -odc person -ods 320 240 -odt 0.25 -s
-    python main.py -a an -if image -id "{add here the main_path}/data/VISPR/2017_17368641.jpg" -anm adaptive_blur -odc person -ods 320 240 -odt 0.25 -s
-    python main.py -a an -if image -id "{add here the main_path}/data/VISPR/2017_17368641.jpg" -anm adaptive_full_blur -odc person -ods 320 240 -odt 0.25 -s
-    python main.py -a an -if image -id "{add here the main_path}/data/VISPR/2017_17368641.jpg" -anm pixelization -odc person -ods 320 240 -odt 0.25 -s
-    python main.py -a an -if image -id "{add here the main_path}/data/VISPR/2017_17368641.jpg" -anm adaptive_pixelization -odc person -ods 320 240 -odt 0.25 -s
+    python main.py -a an -if image -is 320 240 -id "{add here the main_path}/data/VISPR/2017_17368641.jpg" -anm no-an -odc person -ods 320 240 -odt 0.25 -v
+    python main.py -a an -if image -is 320 240 -id "{add here the main_path}/data/VISPR/2017_17368641.jpg" -anm mask -odc person -ods 320 240 -odt 0.25 -s
+    python main.py -a an -if image -is 320 240 -id "{add here the main_path}/data/VISPR/2017_17368641.jpg" -anm blur -odc person -ods 320 240 -odt 0.25 -s
+    python main.py -a an -if image -is 320 240 -id "{add here the main_path}/data/VISPR/2017_17368641.jpg" -anm adaptive_blur -odc person -ods 320 240 -odt 0.25 -s
+    python main.py -a an -if image -is 320 240 -id "{add here the main_path}/data/VISPR/2017_17368641.jpg" -anm adaptive_full_blur -odc person -ods 320 240 -odt 0.25 -s
+    python main.py -a an -if image -is 320 240 -id "{add here the main_path}/data/VISPR/2017_17368641.jpg" -anm pixelization -odc person -ods 320 240 -odt 0.25 -s
+    python main.py -a an -if image -is 320 240 -id "{add here the main_path}/data/VISPR/2017_17368641.jpg" -anm adaptive_pixelization -odc person -ods 320 240 -odt 0.25 -s
     
   ### LA3D: AN-VAD on Videos
-    python main.py -a an-ad -ads ucf -if video -id  "{add here the main_path}/data/UCF_Crime/Burglary033_x264.mp4" -anm no-an -odc person -ods 320 240 -odt 0.25 -s
-    python main.py -a an-ad -ads ucf -if video -id  "{add here the main_path}/data/UCF_Crime/Burglary033_x264.mp4" -anm mask -odc person -ods 320 240 -odt 0.25 -s
-    python main.py -a an-ad -ads ucf -if video -id  "{add here the main_path}/data/UCF_Crime/Burglary033_x264.mp4" -anm blur -odc person -ods 320 240 -odt 0.25 -s
-    python main.py -a an-ad -ads ucf -if video -id  "{add here the main_path}/data/UCF_Crime/Burglary033_x264.mp4" -anm adaptive_blur -odc person -ods 320 240 -odt 0.25 -s
-    python main.py -a an-ad -ads ucf -if video -id  "{add here the main_path}/data/UCF_Crime/Burglary033_x264.mp4" -anm adaptive_full_blur -odc person -ods 320 240 -odt 0.25 -s
-    python main.py -a an-ad -ads ucf -if video -id  "{add here the main_path}/data/UCF_Crime/Burglary033_x264.mp4" -anm pixelization -odc person -ods 320 240 -odt 0.25 -s
-    python main.py -a an-ad -ads ucf -if video -id  "{add here the main_path}/data/UCF_Crime/Burglary033_x264.mp4" -anm adaptive_pixelization -odc person -ods 320 240 -odt 0.25 -s
+    python main.py -a an-ad -adm pel -ads ucf -if video -id "{add here the main_path}/data/UCF_Crime/Burglary033_x264.mp4" -anm no-an -odc person -ods 320 240 -odt 0.25 -s
+    python main.py -a an-ad -adm pel -ads ucf -if video -id "{add here the main_path}/data/UCF_Crime/Burglary033_x264.mp4" -anm mask -odc person -ods 320 240 -odt 0.25 -s
+    python main.py -a an-ad -adm pel -ads ucf -if video -id "{add here the main_path}/data/UCF_Crime/Burglary033_x264.mp4" -anm blur -odc person -ods 320 240 -odt 0.25 -s
+    python main.py -a an-ad -adm pel -ads ucf -if video -id "{add here the main_path}/data/UCF_Crime/Burglary033_x264.mp4" -anm adaptive_blur -odc person -ods 320 240 -odt 0.25 -s
+    python main.py -a an-ad -adm pel -ads ucf -if video -id "{add here the main_path}/data/UCF_Crime/Burglary033_x264.mp4" -anm adaptive_full_blur -odc person -ods 320 240 -odt 0.25 -s
+    python main.py -a an-ad -adm pel -ads ucf -if video -id "{add here the main_path}/data/UCF_Crime/Burglary033_x264.mp4" -anm pixelization -odc person -ods 320 240 -odt 0.25 -s
+    python main.py -a an-ad -adm pel -ads ucf -if video -id "{add here the main_path}/data/UCF_Crime/Burglary033_x264.mp4" -anm adaptive_pixelization -odc person -ods 320 240 -odt 0.25 -s
+
+    python main.py -a an-ad -adm pel -ads xd -if video -id "{add here the main_path}/data/XD_Violence/Fast.Five.2011__#00-32-56_00-33-26_label_B2-0-0.mp4" -anm no-an -odc person -ods 320 240 -odt 0.25 -s
+    python main.py -a an-ad -adm pel -ads xd -if video -id "{add here the main_path}/data/XD_Violence/Fast.Five.2011__#00-32-56_00-33-26_label_B2-0-0.mp4" -anm mask -odc person -ods 320 240 -odt 0.25 -s
+    python main.py -a an-ad -adm pel -ads xd -if video -id "{add here the main_path}/data/XD_Violence/Fast.Five.2011__#00-32-56_00-33-26_label_B2-0-0.mp4" -anm adaptive_blur -odc person -ods 320 240 -odt 0.25 -s
+    python main.py -a an-ad -adm pel -ads xd -if video -id "{add here the main_path}/data/XD_Violence/Fast.Five.2011__#00-32-56_00-33-26_label_B2-0-0.mp4" -anm adaptive_full_blur -odc person -ods 320 240 -odt 0.25 -s
+    python main.py -a an-ad -adm pel -ads xd -if video -id "{add here the main_path}/data/XD_Violence/Fast.Five.2011__#00-32-56_00-33-26_label_B2-0-0.mp4" -anm pixelization -odc person -ods 320 240 -odt 0.25 -s
+    python main.py -a an-ad -adm pel -ads xd -if video -id "{add here the main_path}/data/XD_Violence/Fast.Five.2011__#00-32-56_00-33-26_label_B2-0-0.mp4" -anm adaptive_pixelization -odc person -ods 320 240 -odt 0.25 -s
+
+    python main.py -a an-ad -adm mgfn -ads ucf -if video -id "{add here the main_path}/data/UCF_Crime/Burglary033_x264.mp4" -anm mask -odc person -ods 320 240 -odt 0.25 -s
+    python main.py -a an-ad -adm mgfn -ads xd -if video -id "{add here the main_path}/data/XD_Violence/Fast.Five.2011__#00-32-56_00-33-26_label_B2-0-0.mp4" -anm mask -odc person -ods 320 240 -odt 0.25 -s
     
+## Usage \[Notebook\]
+    We have also provided a [notebook](https://github.com/muleina/LA3D/notebook/an_vad_example_1.ipynb) for step=by-step demo of the AN and VAD using different models and data sources. 
 
 ## Examples: 
 ### AN Enhancement using LA3D's Adaptive Approach 

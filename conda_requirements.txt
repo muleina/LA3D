@@ -2,16 +2,17 @@
 # $ conda create --name <env> --file <this file>
 # platform: win-64
 _anaconda_depends=2023.07=py311_1
-ffmpeg=4.2.3=ha925a31_0
-ffmpeg-python=0.2.0=pypi_0
-ffmpegio=0.9.0=pypi_0
-moviepy=1.0.3=pypi_0
-numpy=1.26.4=pypi_0
-opencv-python=4.8.0.76=pypi_0
-pillow=10.4.0=pypi_0
-torch=2.5.1+cu124=pypi_0
-torchaudio=2.5.1+cu124=pypi_0
-torchsummaryx=1.3.0=pypi_0
-torchvision=0.20.1+cu124=pypi_0
-tqdm=4.65.0=py311h746a85d_0
-ultralytics=8.3.79=pypi_0
+einops
+ffmpeg=4.2.3
+matplotlib
+moviepy=1.0.3
+numpy=1.26.4
+opencv-python=4.8.0.76
+pillow=10.4.0
+scikit-learn=1.3.0
+scipy=1.11.1
+torch=2.5.1
+torchaudio=2.5.1
+torchvision=0.20.1
+tqdm=4.65.0
+ultralytics=8.3.79

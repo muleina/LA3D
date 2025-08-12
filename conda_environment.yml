@@ -1,0 +1,26 @@
+name: la3d
+channels:
+  - pytorch
+  - nvidia
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.11
+  - pip
+  - ffmpeg=4.2.3
+  - matplotlib
+  - scikit-learn=1.3.0
+  - scipy=1.11.1
+  - tqdm=4.65.0
+  - pip:
+    - einops
+    - ffmpegio==0.9.0
+    - matplotlib
+    - moviepy==1.0.3
+    - numpy==1.26.4
+    - opencv-python==4.11.0.86
+    - pillow==10.4.0
+    - torch==2.5.1
+    - torchaudio==2.5.1
+    - torchvision==0.20.1
+    - ultralytics==8.3.79
