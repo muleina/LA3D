@@ -18,6 +18,7 @@ def attention(q, k, v):
 def MSNSD(features,scores,bs,batch_size,drop_out,ncrops,k, infer=False):
     #magnitude selection and score prediction
     device = features.get_device()
+    device = device if device >= 0 else "cpu"
     features = features  # (B*10crop,32,1024)
     bc, t, f = features.size()
 

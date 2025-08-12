@@ -35,6 +35,6 @@ class XEncoder(nn.Module):
             for k in range(w_len):
                 m[j, min(max(j - w_len // 2 + k, 0), temporal_scale - 1)] = 1.
 
-        m = m.repeat(self.n_heads, len(seq_len), 1, 1).cuda()
+        m = m.repeat(self.n_heads, len(seq_len), 1, 1).to(next(self.parameters()).device)
 
         return m
