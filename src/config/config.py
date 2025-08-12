@@ -19,7 +19,7 @@ object_detection_classid_mapper_dict = {"person":0, "car":2, "motorcycle":3, "bi
                             "cell phone":67, "laptop":63, "tv":62, 
                             "handbag":26, "backpack":24, "umbrella":25, "suitcase":28}
 object_detection_classname_list = ["person", "cell phone", "laptop", "tv"]
-object_detection_thr = 0.25
+object_detection_thr = 0.15
 object_detection_imgsz = (320, 240)
 color_format = "bgr"
 detector_name = "body__yolo"
