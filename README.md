@@ -159,7 +159,7 @@ Real-time processing through webcam and offline processing from image or video f
     python main.py -a an-ad -adm mgfn -ads xd -if video -id "{add here the main_path}/data/XD_Violence/Fast.Five.2011__#00-32-56_00-33-26_label_B2-0-0.mp4" -anm mask -odc person -ods 320 240 -odt 0.25 -s
     
 ## Usage-Notebook
-    We have also provided a [notebook](https://github.com/muleina/LA3D/notebook/an_vad_example_1.ipynb) for step=by-step demo of the AN and VAD using different models and data sources. 
+We have also provided a [notebook](https://github.com/muleina/LA3D/notebook/an_vad_example_1.ipynb) for step=by-step demo of the AN and VAD using different models and data sources. 
 
 ## Examples: 
 ### AN Enhancement using LA3D's Adaptive Approach 
