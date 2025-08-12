@@ -58,11 +58,11 @@ $G^0$: baseline Guassian, $G^a$: adaptive Guassian, $G^a_{max}$: adaptive maximu
 <!-- START doctoc -->
 **Table of Contents**
 - [Installation](https://github.com/muleina/LA3D#installation)
-- [Usage \[CLI\]](https://github.com/muleina/LA3D#usage-[cli])
+- [Usage-CLI](https://github.com/muleina/LA3D#usage-cli)
   - [LA3D: Real-Time AN using Webcam](https://github.com/muleina/LA3D#LA3D:-Real-Time-AN-using-Webcam)
   - [LA3D: AN on Images](https://github.com/muleina/LA3D#LA3D:-AN-on-Images)
   - [LA3D: AN-VAD on Videos](https://github.com/muleina/LA3D#LA3D:-AN-VAD-on-Videos)
-- [Usage \[Notebook\]](https://github.com/muleina/LA3D#usage-[notebook])
+- [Usage-Notebook](https://github.com/muleina/LA3D#usage-notebook)
 - [Examples](https://github.com/muleina/LA3D#Examples)
   - [AN Enhancement using our Adaptive Approach](https://github.com/muleina/LA3D#AN-Enhancement-using-our-Adaptive-Approach)
   - [AN Trade-offs on VAD](https://github.com/muleina/LA3D#AN-Trade-offs-on-VAD)
@@ -112,7 +112,7 @@ $G^0$: baseline Guassian, $G^a$: adaptive Guassian, $G^a_{max}$: adaptive maximu
 
     <!--  -->
 
-## Usage \[CLI\]
+## Usage-CLI
 
 The LA3D app testing parameters can be supplied through the main.py. 
 
@@ -158,7 +158,7 @@ Real-time processing through webcam and offline processing from image or video f
     python main.py -a an-ad -adm mgfn -ads ucf -if video -id "{add here the main_path}/data/UCF_Crime/Burglary033_x264.mp4" -anm mask -odc person -ods 320 240 -odt 0.25 -s
     python main.py -a an-ad -adm mgfn -ads xd -if video -id "{add here the main_path}/data/XD_Violence/Fast.Five.2011__#00-32-56_00-33-26_label_B2-0-0.mp4" -anm mask -odc person -ods 320 240 -odt 0.25 -s
     
-## Usage \[Notebook\]
+## Usage-Notebook
     We have also provided a [notebook](https://github.com/muleina/LA3D/notebook/an_vad_example_1.ipynb) for step=by-step demo of the AN and VAD using different models and data sources. 
 
 ## Examples: 
