@@ -2,7 +2,7 @@
 
 Official implementation of the paper "Low-Latency Video Anonymization for Crowd Anomaly Detection: Privacy vs. Performance" (full paper in [arXiv](https://arxiv.org/abs/2410.18717))
 
-The LA3D offer computationally efficient and dynamic anonymization (AN) that enhance privacy protection while maintain the accuracy of Video Anomaly Detection (VAD). 
+The LA3D offers computationally efficient and dynamic anonymization (AN) that enhances privacy protection while maintaining the accuracy of Video Anomaly Detection (VAD). 
 
 ## Highlights (live dashboard demo at [PACA AI4citizens](https://ai4citizens.uia.no/app_dashboard))
 
@@ -22,7 +22,7 @@ The LA3D offer computationally efficient and dynamic anonymization (AN) that enh
 
 ## Resources
 
-We thank and give credit to the public data sets and source code for VAD model provides listed below.
+We thank and give credit to the public data sets and source codes for the models listed below.
 
 - Data sets
     - Privacy Data sets:
@@ -166,7 +166,7 @@ Use the flag -v for direct visualization of the results and -s to save results.
     
 ## Usage-Notebook
 
-We have also provided notebooks for step-wise demo of the AN-VAD pipeline using different models and data sources. 
+We have also provided notebooks for a step-wise demo of the AN-VAD pipeline using different models and data sources. 
 -  [VISPR Image AN Notebook](https://github.com/muleina/LA3D/notebook/LA3D_AN_example_image_VISPR_dataset.ipynb) 
 -  [UCF-Crime Video AN-VAD Notebook](https://github.com/muleina/LA3D/notebook/LA3D_AN_VAD_example_video_UCF_Crime_dataset.ipynb) 
 -  [XD-Violence Video AN-VAD Notebook](https://github.com/muleina/LA3D/notebook/LA3D_AN_VAD_example_video_XD_Violence_dataset.ipynb) 
@@ -175,7 +175,7 @@ We have also provided notebooks for step-wise demo of the AN-VAD pipeline using 
 
 ### AN Enhancement using LA3D's Adaptive Approach 
 
-Privacy protection comparison with baseline AN, the adaptive AN considerably improves the protection, robust against the target-object depth and image resolution variations. 
+The privacy shield comparison with baseline AN: the adaptive AN improves protection considerably---robust against target-object depth and image resolution variations. 
 
 $G^0$: baseline Guassian, $G^a$: adaptive Guassian, $P^0$: baseline pixelization, and $\mathcal{P^a}$: adaptive pixelization.
 <img src="./results/paper/adaptive_an_example_hyper_parameter_1.jpg" alt="Baseline vs Adaptive AN on VISPR Dataset" title="Baseline vs Adaptive AN onb VISPR Dataset" width=100% height=100%>
@@ -215,7 +215,7 @@ We have also conducted the cost analysis of the AN in GPU and CPU modes:
 
 ## Privacy-Leakage after AN
 
-We have revealed potential privacy leakage after AN where individual person can be identified from personal belongings.
+We have revealed potential privacy leakage after AN, where a person can be identified from personal belongings.
 We employ OSNet ReID models on the Market1501 multi-camera dataset. 
 
 <img src="./results/paper/mask_an_privacy_leakage_reid_through_objects.jpg" alt="Privacy Leakage after AN through Items" title="Privacy Leakage after AN through Items" width=100% height=100%>
