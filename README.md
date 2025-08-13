@@ -6,13 +6,12 @@ The LA3D offers computationally efficient and dynamic anonymization (AN) that en
 
 ## Highlights (live dashboard demo at [PACA AI4citizens](https://ai4citizens.uia.no/app_dashboard))
 
-- Recent advancements in AI hold considerable promise for enhancing computer vision (CV) applications using surveillance cameras.  
+- AI holds considerable promise for enhancing computer vision (CV) applications using surveillance cameras.  
 - Concerns about privacy and model bias have made it challenging to utilize CV in public. 
-- Existing AN approaches that employ deep learning models are computationally demanding for real-time edge deployment. 
+- Deep learning AN models are computationally demanding for real-time edge deployment. 
 - In this study, we revisit conventional AN solutions for privacy protection and real-time VAD. 
-- We propose a novel LA3D that employs dynamic AN adjustment to enhance privacy-aware VAD. 
-- We have evaluated the approaches on publicly available privacy-attribute and large-scale VAD data sets.
-- The LA3D enables substantial improvement in the privacy AN without significantly degrading VAD efficacy.
+- We propose a novel LA3D that employs dynamic AN to enhance privacy-aware VAD. 
+- The LA3D enables substantial improvement in the privacy AN without significantly degrading VAD efficacy, evaluated on publicly available privacy and large-scale VAD data sets.
 
 https://github.com/user-attachments/assets/682c9bc3-8030-407e-88ff-639c31602160
 
