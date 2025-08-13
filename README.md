@@ -1,3 +1,10 @@
+<div>
+    <a href="https://github.com/muleina/LA3D/actions/workflows/python-package.yml"><img src="https://github.com/muleina/LA3D/actions/workflows/python-package.yml/badge.svg" alt="LA3D CI Python"></a>
+    <a href="https://github.com/muleina/LA3D/actions/workflows/python-package-conda.yml"><img src="https://github.com/muleina/LA3D/actions/workflows/python-package-conda.yml/badge.svg" alt="LA3D CI Anaconda"></a>
+    <a href="https://colab.research.google.com/github/muleina/LA3D/blob/main/notebook/LA3D_AN_VAD_example_video_XD_Violence_dataset.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open LA3D-AN-VAD-Video-XD In Colab"></a>
+</div>
+</div>
+<br>
 # LA3D: A Lightweight Adaptive Privacy Anonymization for Video Anomaly Detection
 
 Official implementation of "Low-Latency Video Anonymization for Crowd Anomaly Detection: Privacy vs. Performance" (Paper in [arXiv](https://arxiv.org/abs/2410.18717))
@@ -160,9 +167,9 @@ Use the flag -v for direct visualization of the results and -s to save results.
 ## Usage-Notebook
 
 We have also provided notebooks for a step-wise demo of the AN-VAD pipeline using different models and data sources. 
--  [VISPR Image AN Notebook](https://github.com/muleina/LA3D/blob/main/notebook/LA3D_AN_example_image_VISPR_dataset.ipynb) 
--  [UCF-Crime Video AN-VAD Notebook](https://github.com/muleina/LA3D/blob/main/notebook/LA3D_AN_VAD_example_video_UCF_Crime_dataset.ipynb) 
--  [XD-Violence Video AN-VAD Notebook](https://github.com/muleina/LA3D/blob/main/notebook/LA3D_AN_VAD_example_video_XD_Violence_dataset.ipynb) 
+-  [VISPR Image AN Notebook](https://github.com/muleina/LA3D/blob/main/notebook/LA3D_AN_example_image_VISPR_dataset.ipynb) <a href="https://colab.research.google.com/github/muleina/LA3D/blob/main/notebook/LA3D_AN_example_image_VISPR_dataset.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open LA3D-AN-Image In Colab"></a> 
+-  [UCF-Crime Video AN-VAD Notebook](https://github.com/muleina/LA3D/blob/main/notebook/LA3D_AN_VAD_example_video_UCF_Crime_dataset.ipynb) <a href="https://colab.research.google.com/github/muleina/LA3D/blob/main/notebook/LA3D_AN_VAD_example_video_UCF_Crime_dataset.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open LA3D-AN-Image In Colab"></a> 
+-  [XD-Violence Video AN-VAD Notebook](https://github.com/muleina/LA3D/blob/main/notebook/LA3D_AN_VAD_example_video_XD_Violence_dataset.ipynb) <a href="https://colab.research.google.com/github/muleina/LA3D/blob/main/notebook/LA3D_AN_VAD_example_video_XD_Violence_dataset.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open LA3D-AN-Image In Colab"></a> 
 
 ## Results: 
 
