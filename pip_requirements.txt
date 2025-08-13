@@ -1,5 +1,4 @@
 einops
-ffmpeg==4.2.3
 matplotlib
 moviepy==1.0.3 
 numpy==1.26.4 

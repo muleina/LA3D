@@ -3,7 +3,6 @@
 # platform: win-64
 _anaconda_depends=2023.07=py311_1
 einops
-ffmpeg=4.2.3
 matplotlib
 moviepy=1.0.3
 numpy=1.26.4
