@@ -79,32 +79,32 @@ def train(iteration=0):
         epoch += 1
 
 
- #----------------------------------------------------------------------------------------------------------------------------------------#
-from tensorboardX import SummaryWriter
-writer = SummaryWriter('%s/tb.log'%args.cv_dir)
+#  #----------------------------------------------------------------------------------------------------------------------------------------#
+# from tensorboardX import SummaryWriter
+# writer = SummaryWriter('%s/tb.log'%args.cv_dir)
 
-from data import kinetics
-from models import resnet
+# from data import kinetics
+# from models import resnet
 
-trainset = kinetics.Kinetics(root='data/kinetics/', split='train', clip_len=32)
-trainloader = torch.utils.data.DataLoader(trainset, batch_size=args.batch_size, shuffle=True, num_workers=args.workers, pin_memory=True)
+# trainset = kinetics.Kinetics(root='data/kinetics/', split='train', clip_len=32)
+# trainloader = torch.utils.data.DataLoader(trainset, batch_size=args.batch_size, shuffle=True, num_workers=args.workers, pin_memory=True)
 
-net = resnet.i3_res50(len(testset.verbs))
-net.cuda()
+# net = resnet.i3_res50(len(testset.verbs))
+# net.cuda()
 
-optim_params = list(filter(lambda p: p.requires_grad, net.parameters()))
-print ('Optimizing %d paramters'%len(optim_params))
-optimizer = optim.SGD(optim_params, lr=args.lr, weight_decay=args.weight_decay)
+# optim_params = list(filter(lambda p: p.requires_grad, net.parameters()))
+# print ('Optimizing %d paramters'%len(optim_params))
+# optimizer = optim.SGD(optim_params, lr=args.lr, weight_decay=args.weight_decay)
 
-start_iter = 0
-if args.load:
-    checkpoint = torch.load(args.load, map_location='cpu')
-    start_iter = checkpoint['iter']
-    net.load_state_dict(checkpoint['net'])
-    optimizer.load_state_dict(checkpoint['optimizer'])
-    print ('Loaded checkpoint from %s'%os.path.basename(args.load))
+# start_iter = 0
+# if args.load:
+#     checkpoint = torch.load(args.load, map_location='cpu')
+#     start_iter = checkpoint['iter']
+#     net.load_state_dict(checkpoint['net'])
+#     optimizer.load_state_dict(checkpoint['optimizer'])
+#     print ('Loaded checkpoint from %s'%os.path.basename(args.load))
 
-if args.parallel:
-    net = nn.DataParallel(net)
+# if args.parallel:
+#     net = nn.DataParallel(net)
 
-train(start_iter)
+# train(start_iter)
