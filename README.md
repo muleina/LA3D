@@ -1,49 +1,43 @@
 # LA3D: A Lightweight Adaptive Privacy Anonymization for Video Anomaly Detection
 
-Official implementation of the paper "Low-Latency Video Anonymization for Crowd Anomaly Detection: Privacy vs. Performance" (full paper in [arXiv](https://arxiv.org/abs/2410.18717))
+Official implementation of "Low-Latency Video Anonymization for Crowd Anomaly Detection: Privacy vs. Performance" (Paper in [arXiv](https://arxiv.org/abs/2410.18717))
 
 The LA3D offers computationally efficient and dynamic anonymization (AN) that enhances privacy protection while maintaining the accuracy of Video Anomaly Detection (VAD). 
 
 ## Highlights (live dashboard demo at [PACA AI4citizens](https://ai4citizens.uia.no/app_dashboard))
 
 - Recent advancements in AI hold considerable promise for enhancing computer vision (CV) applications using surveillance cameras.  
-
 - Concerns about privacy and model bias have made it challenging to utilize CV in public. 
-
-- Most of the existing AN approaches employ deep learning models that are computationally demanding for real-time edge deployment. 
-
+- Existing AN approaches that employ deep learning models are computationally demanding for real-time edge deployment. 
 - In this study, we revisit conventional AN solutions for privacy protection and real-time VAD. 
-
 - We propose a novel LA3D that employs dynamic AN adjustment to enhance privacy-aware VAD. 
-
 - We have evaluated the approaches on publicly available privacy-attribute and large-scale VAD data sets.
+- The LA3D enables substantial improvement in the privacy AN without significantly degrading VAD efficacy.
 
-- Our experiment demonstrates that LA3D enables substantial improvement in the privacy AN capability without significantly degrading VAD efficacy.
+https://github.com/user-attachments/assets/682c9bc3-8030-407e-88ff-639c31602160
+
+https://github.com/user-attachments/assets/2f4fc93f-af31-4f6b-a9ad-9ffa8151ebc1
 
 ## Resources
 
 We thank and give credit to the public data sets and source codes for the models listed below.
-
 - Data sets
     - Privacy Data sets:
         - VISPR ([data](https://tribhuvanesh.github.io/vpa/), [paper](https://arxiv.org/abs/1703.10660))
         - Market1501 ([data](https://academictorrents.com/details/3ea1f8ae1d3155addff586a96006d122587663ee), [paper](https://ieeexplore.ieee.org/document/7410490))
-
     - Video Anomaly Detection:
         - UCF-Crime ([repo](https://www.crcv.ucf.edu/projects/real-world/), [paper](https://openaccess.thecvf.com/content_cvpr_2018/html/Sultani_Real-World_Anomaly_Detection_CVPR_2018_paper.html))
         - XD-Violence ([repo](https://roc-ng.github.io/XD-Violence/), [paper](https://link.springer.com/chapter/10.1007/978-3-030-58577-8_20))
-
 - Models: 
     - PEL4VAD Weakly-Supervised VAD Model ([repo](https://github.com/yujiangpu20/PEL4VAD), [paper](https://ieeexplore.ieee.org/abstract/document/10667004))
     - MGFN Weakly-Supervised VAD Model ([repo](https://github.com/carolchenyx/MGFN.), [paper](https://ojs.aaai.org/index.php/AAAI/article/view/25112))
     - Video Encoding Model ([repo](https://github.com/google-deepmind/kinetics-i3d), [paper](https://arxiv.org/abs/1705.06950), [paper](https://arxiv.org/abs/1705.07750), [paper](https://openaccess.thecvf.com/content_cvpr_2018/html/Wang_Non-Local_Neural_Networks_CVPR_2018_paper.html))
     - ReID Model ([repo](https://github.com/KaiyangZhou/deep-person-reid), [paper](https://openaccess.thecvf.com/content_ICCV_2019/html/Zhou_Omni-Scale_Feature_Learning_for_Person_Re-Identification_ICCV_2019_paper.html))
 
-
 ## System Design of the LA3D  
 
 General System Pipeline Diagram of Anonymized VAD
-<img src="./results/paper/LA3D_diagrams-vad_anonymized.png" alt="LA3D_diagrams-vad_anonymized" title="LA3D Diagram Anonymized VAD" width=100% height=100%>
+<img src="./results/paper/LA3D_diagrams-vad_anonymized.png" alt="LA3D_diagrams-vad_anonymized" title="LA3D Diagram Anonymized VAD" width=80% height=80%>
 
 System Pipeline Diagram of the adaptive AN System: The adaptive AN enhances privacy protection by utilizing the dynamic AN method.
 <img src="./results/paper/LA3D_diagrams-vad_anonymized_adaptive_4.png" alt="LA3D Diagram Adaptive AN Approach" title="LA3D Diagram Adaptive AN Approach" width=100% height=100%>
@@ -52,7 +46,7 @@ System Pipeline Diagram of the adaptive AN System: The adaptive AN enhances priv
 
 Using PEL4VAD and MGFN VAD Models on the UCF-Crime and XD-Violence Datasets. 
 
-$G^0$: baseline Guassian, $G^a$: adaptive Guassian, $G^a_{max}$: adaptive maximum Guassian, $P^0$: baseline pixelization, $\mathcal{P^a}$: adaptive pixelization, and $P^a_{max}$: adaptive maximum pixelization.
+$No-AN$: Non-anonymized, $G^0$: baseline Guassian smoothing, $G^a$: adaptive Guassian, $G^a_{max}$: adaptive maximum Guassian, $P^0$: baseline pixelization, $\mathcal{P^a}$: adaptive pixelization, and $P^a_{max}$: adaptive maximum pixelization.
 <img src="./results/paper/adaptive_an_vad_perf_ucf_xd.jpg" alt="The PEL4VAD and MGFN VAD models on UCF-Crime and XD-Violence vs. PD on VISPR" title="The PEL4VAD and MGFN VAD models on UCF-Crime and XD-Violence vs. PD on VISPR" width=100% height=100%>
 
 <!-- START doctoc -->
@@ -167,9 +161,9 @@ Use the flag -v for direct visualization of the results and -s to save results.
 ## Usage-Notebook
 
 We have also provided notebooks for a step-wise demo of the AN-VAD pipeline using different models and data sources. 
--  [VISPR Image AN Notebook](https://github.com/muleina/LA3D/notebook/LA3D_AN_example_image_VISPR_dataset.ipynb) 
--  [UCF-Crime Video AN-VAD Notebook](https://github.com/muleina/LA3D/notebook/LA3D_AN_VAD_example_video_UCF_Crime_dataset.ipynb) 
--  [XD-Violence Video AN-VAD Notebook](https://github.com/muleina/LA3D/notebook/LA3D_AN_VAD_example_video_XD_Violence_dataset.ipynb) 
+-  [VISPR Image AN Notebook](https://github.com/muleina/LA3D/blob/main/notebook/LA3D_AN_example_image_VISPR_dataset.ipynb) 
+-  [UCF-Crime Video AN-VAD Notebook](https://github.com/muleina/LA3D/blob/main/notebook/LA3D_AN_VAD_example_video_UCF_Crime_dataset.ipynb) 
+-  [XD-Violence Video AN-VAD Notebook](https://github.com/muleina/LA3D/blob/main/notebook/LA3D_AN_VAD_example_video_XD_Violence_dataset.ipynb) 
 
 ## Results: 
 
@@ -177,7 +171,7 @@ We have also provided notebooks for a step-wise demo of the AN-VAD pipeline usin
 
 The privacy shield comparison with baseline AN: the adaptive AN improves protection considerably---robust against target-object depth and image resolution variations. 
 
-$G^0$: baseline Guassian, $G^a$: adaptive Guassian, $P^0$: baseline pixelization, and $\mathcal{P^a}$: adaptive pixelization.
+$No-AN$: Non-anonymized, $G^0$: baseline Guassian smoothing, $G^a$: adaptive Guassian, $P^0$: baseline pixelization, and $\mathcal{P^a}$: adaptive pixelization.
 <img src="./results/paper/adaptive_an_example_hyper_parameter_1.jpg" alt="Baseline vs Adaptive AN on VISPR Dataset" title="Baseline vs Adaptive AN onb VISPR Dataset" width=100% height=100%>
 
 Scalability comparison on different image resolutions
@@ -192,7 +186,7 @@ The figure demonstrates the impact of the different AN on the VAD performance. T
 ### More AN Results: 
 
 $No-AN$: Non-anonymized, $G^0$: baseline Guassian, $G^a$: adaptive Guassian, $P^0$: baseline pixelization, and $\mathcal{P^a}$: adaptive pixelization.
-<img src="./results/paper/adaptive_an_example_compare.jpg" alt="AN on the VISPR Dataset" title="AN on the VISPR Dataset" width=100% height=100%>
+<img src="./results/paper/adaptive_an_example_compare.jpg" alt="AN on the VISPR Dataset" title="AN on the VISPR Dataset" width=60% height=60%>
 
 
 ## Computational Cost Analysis
@@ -211,14 +205,14 @@ We have also conducted the cost analysis of the AN in GPU and CPU modes:
 
 - The cost analysis demonstrates the feasibility of the proposed lightweight AN approaches for real-time edge CV applications.
 
-<img src="./results/paper/adaptive_an_cost_compare.jpg" alt="Per-Frame AN Computational Cost" title="Per-Frame AN Computational Cost" width=100% height=100%>
+<img src="./results/paper/adaptive_an_cost_compare.jpg" alt="Per-Frame AN Computational Cost" title="Per-Frame AN Computational Cost" width=60% height=60%>
 
 ## Privacy-Leakage after AN
 
 We have revealed potential privacy leakage after AN, where a person can be identified from personal belongings.
 We employ OSNet ReID models on the Market1501 multi-camera dataset. 
 
-<img src="./results/paper/mask_an_privacy_leakage_reid_through_objects.jpg" alt="Privacy Leakage after AN through Items" title="Privacy Leakage after AN through Items" width=100% height=100%>
+<img src="./results/paper/mask_an_privacy_leakage_reid_through_objects.jpg" alt="Privacy Leakage after AN through Items" title="Privacy Leakage after AN through Items" width=60% height=60%>
 
 
 ## BibTeX Citation
