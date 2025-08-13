@@ -1,11 +1,13 @@
 <div>
     <a href="https://github.com/muleina/LA3D/actions/workflows/python-package.yml"><img src="https://github.com/muleina/LA3D/actions/workflows/python-package.yml/badge.svg" alt="LA3D CI Python"></a>
     <a href="https://github.com/muleina/LA3D/actions/workflows/python-package-conda.yml"><img src="https://github.com/muleina/LA3D/actions/workflows/python-package-conda.yml/badge.svg" alt="LA3D CI Anaconda"></a>
-    <a href="https://colab.research.google.com/github/muleina/LA3D/blob/main/notebook/LA3D_AN_VAD_example_video_XD_Violence_dataset.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open LA3D-AN-VAD-Video-XD In Colab"></a>
+    <a href="https://colab.research.google.com/github/muleina/LA3D/blob/main/notebook/LA3D_AN_VAD_example_video_XD_Violence_dataset.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open LA3D-AN-VAD-Video-XD in Colab"></a>
+    <a href="https://ai4citizens.uia.no/app_dashboard"><img src="https://github.com/muleina/LA3D/blob/main/cctv_icon_small.png" alt="LA3D DEMO"></a>
 </div>
-</div>
-<br>
-# LA3D: A Lightweight Adaptive Privacy Anonymization for Video Anomaly Detection
+<!-- [![GitHub Stars](https://img.shields.io/github/stars/muleina/LA3D?style=flat-square&color=yellow)](https://github.com/muleina/LA3D/stargazers) -->
+<!-- [![Contributors](https://img.shields.io/github/contributors/muleina/LA3D?style=flat-square&color=blue)](https://github.com/muleina/LA3D/graphs/contributors) -->
+
+# <a href="https://ai4citizens.uia.no/app_dashboard"><img src="https://github.com/muleina/LA3D/blob/main/la3d_icon.png" alt="LA3D DEMO"></a> LA3D: A Lightweight Adaptive Privacy Anonymization for Video Anomaly Detection
 
 Official implementation of "Low-Latency Video Anonymization for Crowd Anomaly Detection: Privacy vs. Performance" (Paper in [arXiv](https://arxiv.org/abs/2410.18717))
 
