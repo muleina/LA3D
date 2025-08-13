@@ -63,7 +63,7 @@ $G^0$: baseline Guassian, $G^a$: adaptive Guassian, $G^a_{max}$: adaptive maximu
   - [LA3D: AN on Images](https://github.com/muleina/LA3D#LA3D:-AN-on-Images)
   - [LA3D: AN-VAD on Videos](https://github.com/muleina/LA3D#LA3D:-AN-VAD-on-Videos)
 - [Usage-Notebook](https://github.com/muleina/LA3D#usage-notebook)
-- [Examples](https://github.com/muleina/LA3D#Examples)
+- [Results](https://github.com/muleina/LA3D#Results)
   - [AN Enhancement using our Adaptive Approach](https://github.com/muleina/LA3D#AN-Enhancement-using-our-Adaptive-Approach)
   - [AN Trade-offs on VAD](https://github.com/muleina/LA3D#AN-Trade-offs-on-VAD)
   - [More AN Results](https://github.com/muleina/LA3D#More-AN-Results)
@@ -117,7 +117,9 @@ The LA3D app testing parameters can be supplied through the main.py.
 
 Real-time processing through webcam and offline processing from image or video files are supported.
 
-  ### LA3D: Real-Time AN using Webcam
+Use the flag -v for direct visualization of the results and -s to save results.
+
+### LA3D: Real-Time AN using Webcam
     python main.py -a an -if webcam -is 320 240 -anm mask -odc person -ods 320 240 -odt 0.25 -v
     python main.py -a an -if webcam -is 320 240 -anm no-an -odc person -ods 320 240 -odt 0.25 -v
     python main.py -a an -if webcam -is 320 240 -anm edge -odc person -ods 320 240 -odt 0.25 -v
@@ -129,7 +131,7 @@ Real-time processing through webcam and offline processing from image or video f
     python main.py -a an -if webcam -is 320 240 -anm adaptive_pixelization -odc person -ods 320 240 -odt 0.25 -v
     python main.py -a an -if webcam -is 320 240 -anm adaptive_max_pixelization -odc person -ods 320 240 -odt 0.25 -v
     
-  ### LA3D: AN on Images
+### LA3D: AN on Images
     python main.py -a an -if image -is 320 240 -id "{add here the main_path}/data/VISPR/2017_17368641.jpg" -anm no-an -odc person -ods 320 240 -odt 0.25 -v
     python main.py -a an -if image -is 320 240 -id "{add here the main_path}/data/VISPR/2017_17368641.jpg" -anm mask -odc person -ods 320 240 -odt 0.25 -s
     python main.py -a an -if image -is 320 240 -id "{add here the main_path}/data/VISPR/2017_17368641.jpg" -anm blur -odc person -ods 320 240 -odt 0.25 -s
@@ -138,7 +140,8 @@ Real-time processing through webcam and offline processing from image or video f
     python main.py -a an -if image -is 320 240 -id "{add here the main_path}/data/VISPR/2017_17368641.jpg" -anm pixelization -odc person -ods 320 240 -odt 0.25 -s
     python main.py -a an -if image -is 320 240 -id "{add here the main_path}/data/VISPR/2017_17368641.jpg" -anm adaptive_pixelization -odc person -ods 320 240 -odt 0.25 -s
     
-  ### LA3D: AN-VAD on Videos
+### LA3D: AN-VAD on Videos
+    # PEL4VAD on UCF-Crime dataset
     python main.py -a an-ad -adm pel -ads ucf -if video -id "{add here the main_path}/data/UCF_Crime/Burglary033_x264.mp4" -anm no-an -odc person -ods 320 240 -odt 0.25 -s
     python main.py -a an-ad -adm pel -ads ucf -if video -id "{add here the main_path}/data/UCF_Crime/Burglary033_x264.mp4" -anm mask -odc person -ods 320 240 -odt 0.25 -s
     python main.py -a an-ad -adm pel -ads ucf -if video -id "{add here the main_path}/data/UCF_Crime/Burglary033_x264.mp4" -anm blur -odc person -ods 320 240 -odt 0.25 -s
@@ -147,6 +150,7 @@ Real-time processing through webcam and offline processing from image or video f
     python main.py -a an-ad -adm pel -ads ucf -if video -id "{add here the main_path}/data/UCF_Crime/Burglary033_x264.mp4" -anm pixelization -odc person -ods 320 240 -odt 0.25 -s
     python main.py -a an-ad -adm pel -ads ucf -if video -id "{add here the main_path}/data/UCF_Crime/Burglary033_x264.mp4" -anm adaptive_pixelization -odc person -ods 320 240 -odt 0.25 -s
 
+    # PEL4VAD on XD-Violence dataset
     python main.py -a an-ad -adm pel -ads xd -if video -id "{add here the main_path}/data/XD_Violence/Fast.Five.2011__#00-32-56_00-33-26_label_B2-0-0.mp4" -anm no-an -odc person -ods 320 240 -odt 0.25 -s
     python main.py -a an-ad -adm pel -ads xd -if video -id "{add here the main_path}/data/XD_Violence/Fast.Five.2011__#00-32-56_00-33-26_label_B2-0-0.mp4" -anm mask -odc person -ods 320 240 -odt 0.25 -s
     python main.py -a an-ad -adm pel -ads xd -if video -id "{add here the main_path}/data/XD_Violence/Fast.Five.2011__#00-32-56_00-33-26_label_B2-0-0.mp4" -anm adaptive_blur -odc person -ods 320 240 -odt 0.25 -s
@@ -154,15 +158,24 @@ Real-time processing through webcam and offline processing from image or video f
     python main.py -a an-ad -adm pel -ads xd -if video -id "{add here the main_path}/data/XD_Violence/Fast.Five.2011__#00-32-56_00-33-26_label_B2-0-0.mp4" -anm pixelization -odc person -ods 320 240 -odt 0.25 -s
     python main.py -a an-ad -adm pel -ads xd -if video -id "{add here the main_path}/data/XD_Violence/Fast.Five.2011__#00-32-56_00-33-26_label_B2-0-0.mp4" -anm adaptive_pixelization -odc person -ods 320 240 -odt 0.25 -s
 
+    # MGFN on UCF-Crime dataset
     python main.py -a an-ad -adm mgfn -ads ucf -if video -id "{add here the main_path}/data/UCF_Crime/Burglary033_x264.mp4" -anm mask -odc person -ods 320 240 -odt 0.25 -s
+    
+    # MGFN on XD-Violence dataset
     python main.py -a an-ad -adm mgfn -ads xd -if video -id "{add here the main_path}/data/XD_Violence/Fast.Five.2011__#00-32-56_00-33-26_label_B2-0-0.mp4" -anm mask -odc person -ods 320 240 -odt 0.25 -s
     
 ## Usage-Notebook
-We have also provided a [notebook](https://github.com/muleina/LA3D/notebook/an_vad_example_1.ipynb) for step=by-step demo of the AN and VAD using different models and data sources. 
 
-## Examples: 
+We have also provided notebooks for step-wise demo of the AN-VAD pipeline using different models and data sources. 
+-  [VISPR Image AN Notebook](https://github.com/muleina/LA3D/notebook/LA3D_AN_example_image_VISPR_dataset.ipynb) 
+-  [UCF-Crime Video AN-VAD Notebook](https://github.com/muleina/LA3D/notebook/LA3D_AN_VAD_example_video_UCF_Crime_dataset.ipynb) 
+-  [XD-Violence Video AN-VAD Notebook](https://github.com/muleina/LA3D/notebook/LA3D_AN_VAD_example_video_XD_Violence_dataset.ipynb) 
+
+## Results: 
+
 ### AN Enhancement using LA3D's Adaptive Approach 
-Privacy protection comparison with baseline AN: 
+
+Privacy protection comparison with baseline AN, the adaptive AN considerably improves the protection, robust against the target-object depth and image resolution variations. 
 
 $G^0$: baseline Guassian, $G^a$: adaptive Guassian, $P^0$: baseline pixelization, and $\mathcal{P^a}$: adaptive pixelization.
 <img src="./results/paper/adaptive_an_example_hyper_parameter_1.jpg" alt="Baseline vs Adaptive AN on VISPR Dataset" title="Baseline vs Adaptive AN onb VISPR Dataset" width=100% height=100%>
@@ -172,9 +185,12 @@ Scalability comparison on different image resolutions
 
 ### AN Trade-offs on VAD
 
+The figure demonstrates the impact of the different AN on the VAD performance. The PEL4VAD has generally better anomaly localization than the MGFN VAD model.
+
 <img src="./results/paper/adaptive_an_vad_example_compare.jpg" alt="AN-vAD on the UCF-Crime and XD-Violence Datasets" title="AN-vAD on the UCF-Crime and XD-Violence Datasets" width=100% height=100%>
 
 ### More AN Results: 
+
 $No-AN$: Non-anonymized, $G^0$: baseline Guassian, $G^a$: adaptive Guassian, $P^0$: baseline pixelization, and $\mathcal{P^a}$: adaptive pixelization.
 <img src="./results/paper/adaptive_an_example_compare.jpg" alt="AN on the VISPR Dataset" title="AN on the VISPR Dataset" width=100% height=100%>
 
@@ -183,11 +199,11 @@ $No-AN$: Non-anonymized, $G^0$: baseline Guassian, $G^a$: adaptive Guassian, $P^
 
 The conventional baseline vs adaptive vs deep learning AN approaches on an Intel(R) Xeon(R) Platinum 8168 CPU @ 2.70GHz with 64GB RAM and Nvidia Tesla V100-SXM3-32GB.
 
-- The adaptive approaches of the LA3D increase the processing time by approximately 5%–6% compared to the baselines on the AN-VAD process. 
+- The adaptive approaches of the LA3D increase the processing time by approximately 5% compared to the baselines on the AN-VAD process. 
 
 We have also conducted the cost analysis of the AN in GPU and CPU modes: 
 
-- The adaptive AN increases the GPU processing time by $3$ to $6$ milliseconds and $1$ to $9$ milliseconds on CPU. 
+- The adaptive AN increases the GPU processing time by $3$ to $6$ ms and $1$ to $9$ ms on CPU. 
 
 - The incremental peak memory cost remains roughly $220$ MB for the GPU and $160$ MB for the CPU, with a negligible difference from the baseline ANs. 
 
@@ -200,6 +216,7 @@ We have also conducted the cost analysis of the AN in GPU and CPU modes:
 ## Privacy-Leakage after AN
 
 We have revealed potential privacy leakage after AN where individual person can be identified from personal belongings.
+We employ OSNet ReID models on the Market1501 multi-camera dataset. 
 
 <img src="./results/paper/mask_an_privacy_leakage_reid_through_objects.jpg" alt="Privacy Leakage after AN through Items" title="Privacy Leakage after AN through Items" width=100% height=100%>
 
