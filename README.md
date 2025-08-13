@@ -10,7 +10,7 @@ The LA3D offer computationally efficient and dynamic anonymization (AN) that enh
 
 - Concerns about privacy and model bias have made it challenging to utilize CV in public. 
 
-- Most of them of the existing AN approaches employ deep learning models that are computationally demanding for real-time edge deployment. 
+- Most of the existing AN approaches employ deep learning models that are computationally demanding for real-time edge deployment. 
 
 - In this study, we revisit conventional AN solutions for privacy protection and real-time VAD. 
 
