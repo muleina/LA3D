@@ -30,7 +30,7 @@ https://github.com/user-attachments/assets/2f4fc93f-af31-4f6b-a9ad-9ffa8151ebc1
 
 ## Resources
 
-We thank and give credit to the public data sets and source codes for the models listed below.
+We thank and credit the public data sets and source codes for the models listed below.
 - Data sets
     - Privacy Data sets:
         - VISPR ([data](https://tribhuvanesh.github.io/vpa/), [paper](https://arxiv.org/abs/1703.10660))
@@ -61,6 +61,8 @@ Using PEL4VAD and MGFN VAD Models on the UCF-Crime and XD-Violence Datasets.
 $No-AN$: Non-anonymized, $G^0$: baseline Guassian smoothing, $G^a$: adaptive Guassian, $G^a_{max}$: adaptive maximum Guassian, $P^0$: baseline pixelization, $\mathcal{P^a}$: adaptive pixelization, and $P^a_{max}$: adaptive maximum pixelization.
 
 <img src="./results/paper/adaptive_an_vad_perf_ucf_xd.jpg" alt="The PEL4VAD and MGFN VAD models on UCF-Crime and XD-Violence vs. PD on VISPR" title="The PEL4VAD and MGFN VAD models on UCF-Crime and XD-Violence vs. PD on VISPR" width=100% height=100%>
+
+*NB: The above plot presents improved performance of the MGFN VAD model than the reported scores in the aXriv paper due to an enhanced preprocessing of standardization scaling from kinetics.*
 
 <!-- START doctoc -->
 **Table of Contents**
