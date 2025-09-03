@@ -221,7 +221,7 @@ We have also conducted the cost analysis of the AN in GPU and CPU modes:
 - The incremental memory remains roughly GPU: $220$ MB and CPU: $160$ MB, with a negligible difference from the baseline ANs. 
 - The DL method has a $16 \times$ slower speed and a $14 \times$  higher memory consumption. 
 - The cost analysis demonstrates the feasibility of the proposed lightweight AN approaches for real-time edge CV applications.
-- The [DeepPrivacy2](https://github.com/hukkelas/deep_privacy2), one of the state-of-the-art DL approaches in realistic image generation for AN, considerably sacrifices computation efficiency.
+- The [DeepPrivacy2](https://github.com/hukkelas/deep_privacy2), one of the state-of-the-art DL in realistic image generation for AN, considerably sacrifices computation efficiency.
   
 <img src="./results/paper/adaptive_an_cost_compare.jpg" alt="Per-Frame AN Computational Cost" title="Per-Frame AN Computational Cost" width=100% height=100%>
 
