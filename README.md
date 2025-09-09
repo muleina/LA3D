@@ -14,7 +14,7 @@ Official implementation of the paper on "*Low-Latency Video Anonymization for Cr
 
 The LA3D (*Lightweight Adaptive Privacy Anonymization for Video Anomaly Detection*) offers computationally efficient and dynamic anonymization (AN) that enhances privacy protection while maintaining the accuracy of Video Anomaly Detection (VAD). 
 
-## Highlights (*parent project demo page at* <a href="https://ai4citizens.uia.no/app_dashboard"><img src="https://img.shields.io/badge/PACA-Dashboard-blue" alt="LA3D DEMO"></a>)
+## Highlights (*Project page at* <a href="https://ai4citizens.uia.no/app_dashboard"><img src="https://img.shields.io/badge/PACA-Dashboard-blue" alt="LA3D DEMO"></a>)
 
 - AI holds considerable promise for enhancing computer vision (CV) applications using surveillance CCTV cameras.  
 - Concerns about privacy and model bias have made it challenging to utilize CV in public. 
