@@ -348,7 +348,7 @@ class ConventionalImageAnonymizer():
         kernelsize = kwargs.get("kernelsize", (13, 13)) # (x, y) direction
         sigma = kwargs.get("sigma", (0, 0)) # (x, y) direction, if sigmaY is zero, it is set to be equal to sigmaX, if both sigmas are zeros, they are computed from ksize.width and ksize.height, respectively 
         mask_scale = kwargs.get("mask_scale", 0) # 0 means no adaptive mask scaling, > 0 means mask scaling
-        use_log_scaler = kwargs.get("use_log_scaler", False) # use log scaling for mask scaling
+        use_log_scaler = kwargs.get("use_log_scaler", "log") # use log scaling for mask scaling
         alpha_mask_scale = kwargs.get("alpha_mask_scale", 1.0) # mask scale for bounded adaptive AN
         alpha_dim_scale = kwargs.get("alpha_dim_scale", 0.5)  # limit for bounded adaptive AN
         adaptive_sigma = kwargs.get("adaptive_sigma", False) # True if sigma should be adapted to the mask size, False if sigma is fixed
@@ -366,7 +366,28 @@ class ConventionalImageAnonymizer():
                 raise ex
         else:
             if mask_scale > 0: # bounded adaptive Guassian blur AN
-                im_box_scaler = np.log(mask_scale) if use_log_scaler else mask_scale
+                # im_box_scaler = np.log(mask_scale) if use_log_scaler else mask_scale
+                mask_scale_max = 100 # max mask scale
+                if isinstance(use_log_scaler, bool):
+                    im_box_scaler = np.log(mask_scale) if use_log_scaler else mask_scale
+                elif use_log_scaler == "log":
+                    im_box_scaler = np.log(mask_scale) # ln(x)
+                elif use_log_scaler == "exp": # e^x
+                    im_box_scaler = np.exp(mask_scale)
+                elif use_log_scaler == "quadratic":
+                    im_box_scaler = mask_scale^2 # x^2
+                elif use_log_scaler == "exp_norm": # e^x
+                    norm_scaler = np.log(mask_scale_max) / np.exp(mask_scale_max)
+                    im_box_scaler = norm_scaler * np.exp(mask_scale)
+                elif use_log_scaler == "quadratic_norm":
+                    norm_scaler = np.log(mask_scale_max) / (mask_scale_max^2)
+                    im_box_scaler = norm_scaler  * (mask_scale^2) # x^2
+                elif use_log_scaler == "linear_norm":
+                    norm_scaler = np.log(mask_scale_max) / mask_scale_max
+                    im_box_scaler = norm_scaler * mask_scale
+                else:
+                    im_box_scaler = mask_scale # use_log_scaler == "linear"
+                    
                 im_box_scaler = max(im_box_scaler, 1)
                 r = alpha_mask_scale * im_box_scaler
                 kernelsize = [int(max(r * k, alpha_mask_scale * k)) for k in kernelsize]
@@ -398,7 +419,7 @@ class ConventionalImageAnonymizer():
         """
         downsize = int(kwargs.get("downsize", 4))
         mask_scale = kwargs.get("mask_scale", 0) # 0 means no adaptive mask scaling, > 0 means mask scaling
-        use_log_scaler = kwargs.get("use_log_scaler", False) # use log scaling for mask scaling
+        use_log_scaler = kwargs.get("use_log_scaler", "log") # use log scaling for mask scaling
         alpha_mask_scale = kwargs.get("alpha_mask_scale", 1.0) # mask scale for bounded adaptive AN
         alpha_dim_scale = kwargs.get("alpha_dim_scale", 0.5) # limit for bounded adaptive AN
 
@@ -417,7 +438,28 @@ class ConventionalImageAnonymizer():
         else:
             assert downsize >= 1
             if mask_scale > 0: # bounded adaptive Guassian blur AN
-                im_box_scaler = np.log(mask_scale) if use_log_scaler else mask_scale
+                # im_box_scaler = np.log(mask_scale) if use_log_scaler else mask_scale
+                mask_scale_max = 100 # max mask scale
+                if isinstance(use_log_scaler, bool):
+                    im_box_scaler = np.log(mask_scale) if use_log_scaler else mask_scale
+                elif use_log_scaler == "log":
+                    im_box_scaler = np.log(mask_scale) # ln(x)
+                elif use_log_scaler == "exp": # e^x
+                    im_box_scaler = np.exp(mask_scale)
+                elif use_log_scaler == "quadratic":
+                    im_box_scaler = mask_scale^2 # x^2
+                elif use_log_scaler == "exp_norm": # e^x
+                    norm_scaler = np.log(mask_scale_max) / np.exp(mask_scale_max)
+                    im_box_scaler = norm_scaler * np.exp(mask_scale)
+                elif use_log_scaler == "quadratic_norm":
+                    norm_scaler = np.log(mask_scale_max) / (mask_scale_max^2)
+                    im_box_scaler = norm_scaler  * (mask_scale^2) # x^2
+                elif use_log_scaler == "linear_norm":
+                    norm_scaler = np.log(mask_scale_max) / mask_scale_max
+                    im_box_scaler = norm_scaler * mask_scale
+                else:
+                    im_box_scaler = mask_scale # use_log_scaler == "linear"
+                    
                 im_box_scaler = max(im_box_scaler, 1)
                 r = alpha_mask_scale * im_box_scaler
                 downsize_target = [int(max(r*downsize, alpha_mask_scale * downsize))] * 2
