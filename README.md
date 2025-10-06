@@ -14,7 +14,7 @@ Official implementation of the paper on "*Low-Latency Video Anonymization for Cr
 
 The LA3D (*Lightweight Adaptive Privacy Anonymization for Video Anomaly Detection*) offers computationally efficient and dynamic anonymization (AN) that enhances privacy protection while maintaining the accuracy of Video Anomaly Detection (VAD). 
 
-## Highlights (*parent project demo page at* <a href="https://ai4citizens.uia.no/app_dashboard"><img src="https://img.shields.io/badge/PACA-Dashboard-blue" alt="LA3D DEMO"></a>)
+## Highlights (*Project page at* <a href="https://ai4citizens.uia.no/app_dashboard"><img src="https://img.shields.io/badge/PACA-Dashboard-blue" alt="LA3D DEMO"></a>)
 
 - AI holds considerable promise for enhancing computer vision (CV) applications using surveillance CCTV cameras.  
 - Concerns about privacy and model bias have made it challenging to utilize CV in public. 
@@ -214,20 +214,14 @@ $No-AN$: Non-anonymized, $G^0$: baseline Guassian, $G^a$: adaptive Guassian, $P^
 ## Computational Cost Analysis
 
 The conventional baseline vs adaptive vs deep learning AN approaches on an Intel(R) Xeon(R) Platinum 8168 CPU @ 2.70GHz with 64GB RAM and Nvidia Tesla V100-SXM3-32GB.
-
-- The adaptive approaches of the LA3D increase the processing time by approximately 5% compared to the baselines on the AN-VAD process. 
+- The adaptive approaches of the LA3D increase the processing time by approximately 5% compared to the non-adpative AN-VAD. 
 
 We have also conducted the cost analysis of the AN in GPU and CPU modes: 
-
 - The adaptive AN increases the GPU processing time by $3$ to $6$ ms and $1$ to $9$ ms on CPU. 
-
 - The incremental memory remains roughly GPU: $220$ MB and CPU: $160$ MB, with a negligible difference from the baseline ANs. 
-
 - The DL method has a $16 \times$ slower speed and a $14 \times$  higher memory consumption. 
-
 - The cost analysis demonstrates the feasibility of the proposed lightweight AN approaches for real-time edge CV applications.
-  
-- The [DeepPrivacy2](https://github.com/hukkelas/deep_privacy2), one of the state-of-the-art DL approaches in realistic image generation for AN, considerably sacrifices computation efficiency.
+- The [DeepPrivacy2](https://github.com/hukkelas/deep_privacy2), one of the state-of-the-art DL in realistic image generation for AN, considerably sacrifices computation efficiency.
   
 <img src="./results/paper/adaptive_an_cost_compare.jpg" alt="Per-Frame AN Computational Cost" title="Per-Frame AN Computational Cost" width=100% height=100%>
 
