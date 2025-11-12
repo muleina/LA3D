@@ -5,7 +5,8 @@
 </div>
     <a href="https://colab.research.google.com/github/muleina/LA3D/blob/main/notebook/LA3D_AN_VAD_example_video_XD_Violence_dataset.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open LA3D-AN-VAD-Video-XD in Colab"></a>
     <a href="https://ai4citizens.uia.no/app_dashboard"><img src="https://img.shields.io/badge/Live-Demo-blue" alt="LA3D DEMO"></a>
-    <a href="https://arxiv.org/abs/2410.18717"><img src="https://img.shields.io/badge/Paper-aXriv-red" alt="LA3D PAPER"></a>
+    <a href="https://arxiv.org/abs/2410.18717"><img src="https://img.shields.io/badge/Preprint-aXriv-red" alt="LA3D PAPER"></a>
+    <a href="https://ieeexplore.ieee.org/document/11231379"><img src="https://img.shields.io/badge/Paper-IEEE-blue" alt="LA3D PAPER"></a>
     <a href="https://github.com/muleina/LA3D/blob/main/results/appendix.pdf"><img src="https://img.shields.io/badge/Paper-Appendix-red" alt="LA3D PAPER Appendix"></a>
     <a href="https://github.com/muleina/LA3D/blob/main/results/Supplementary_unpublished.pdf"><img src="https://img.shields.io/badge/Paper-Supplementary-red" alt="LA3D PAPER Supplementary"></a>
     
@@ -15,9 +16,9 @@
 
 # <a href="https://ai4citizens.uia.no/app_dashboard"><img src="https://github.com/muleina/LA3D/blob/main/la3d_icon.png" alt="LA3D DEMO"></a> LA3D: A Lightweight Adaptive Privacy Anonymization for VAD
 
-Official implementation of the paper on "*Low-Latency Video Anonymization for Crowd Anomaly Detection: Privacy vs. Performance*."
+Official implementation of the journal paper on "*Low-Latency Video Anonymization for Crowd Anomaly Detection: Privacy vs. Performance*", published in the *IEEE Transactions on Information Forensics and Security (TIFS)*.
 
-The LA3D (*Lightweight Adaptive Privacy Anonymization for Video Anomaly Detection*) offers computationally efficient and dynamic anonymization (AN) that enhances privacy protection while maintaining the accuracy of Video Anomaly Detection (VAD). 
+The LA3D (*Lightweight Adaptive Privacy Anonymization for Video Anomaly Detection*) provides computationally efficient and dynamic anonymization (AN) that enhances privacy protection while maintaining the accuracy of Video Anomaly Detection (VAD). 
 
 ## Highlights (*Project page at* <a href="https://ai4citizens.uia.no/app_dashboard"><img src="https://img.shields.io/badge/PACA-Dashboard-blue" alt="LA3D DEMO"></a>)
 
@@ -35,7 +36,7 @@ https://github.com/user-attachments/assets/2f4fc93f-af31-4f6b-a9ad-9ffa8151ebc1
 
 ## Resources
 
-We thank and credit the public data sets and source codes for the models listed below.
+We thank and credit the public data sets and source code for the models listed below.
 - Data sets
     - Privacy Data sets:
         - VISPR ([data](https://tribhuvanesh.github.io/vpa/), [paper](https://arxiv.org/abs/1703.10660))
