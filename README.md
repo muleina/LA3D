@@ -5,7 +5,7 @@
 </div>
     <a href="https://colab.research.google.com/github/muleina/LA3D/blob/main/notebook/LA3D_AN_VAD_example_video_XD_Violence_dataset.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open LA3D-AN-VAD-Video-XD in Colab"></a>
     <a href="https://ai4citizens.uia.no/app_dashboard"><img src="https://img.shields.io/badge/Live-Demo-blue" alt="LA3D DEMO"></a>
-    <a href="https://arxiv.org/abs/2410.18717"><img src="https://img.shields.io/badge/Preprint-aXriv-red" alt="LA3D PAPER"></a>
+    <!-- <a href="https://arxiv.org/abs/2410.18717"><img src="https://img.shields.io/badge/Preprint-aXriv-red" alt="LA3D PAPER"></a> -->
     <a href="https://ieeexplore.ieee.org/document/11231379"><img src="https://img.shields.io/badge/Paper-IEEE-blue" alt="LA3D PAPER"></a>
     <a href="https://github.com/muleina/LA3D/blob/main/results/appendix.pdf"><img src="https://img.shields.io/badge/Paper-Appendix-red" alt="LA3D PAPER Appendix"></a>
     <a href="https://github.com/muleina/LA3D/blob/main/results/Supplementary_unpublished.pdf"><img src="https://img.shields.io/badge/Paper-Supplementary-red" alt="LA3D PAPER Supplementary"></a>
