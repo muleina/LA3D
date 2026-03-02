@@ -243,11 +243,12 @@ We employ OSNet ReID models on the Market1501 multi-camera dataset.
 
 If you employ any part of the study or the code, please kindly cite the following paper:
 ```
-@article{asres2024la3d,
-  title={Low-Latency Video Anonymization for Crowd Anomaly Detection: Privacy vs. Performance},
+@article{asres2025low,
+  title={Low-Latency Video Anonymization for Crowd Anomaly Detection: Privacy Versus Performance},
   author={Asres, Mulugeta Weldezgina and Jiao, Lei and Omlin, Christian Walter},
-  journal={arXiv preprint arXiv:2410.18717},
-  year={2024}
+  journal={IEEE Transactions on Information Forensics and Security},
+  year={2025},
+  publisher={IEEE}
 }
 ```
 <!-- END doctoc -->
