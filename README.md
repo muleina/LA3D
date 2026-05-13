@@ -16,7 +16,7 @@
 
 # <a href="https://ai4citizens.uia.no/app_dashboard"><img src="https://github.com/muleina/LA3D/blob/main/la3d_icon.png" alt="LA3D DEMO"></a> LA3D: A Lightweight Adaptive Privacy Anonymization for VAD
 
-Official implementation of the journal paper on "*Low-Latency Video Anonymization for Crowd Anomaly Detection: Privacy vs. Performance*", published in the *IEEE Transactions on Information Forensics and Security (TIFS)*.
+Official implementation of the paper Mulugeta W. Asres, et al. "*Low-Latency Video Anonymization for Crowd Anomaly Detection: Privacy vs. Performance*", published in the *IEEE Transactions on Information Forensics and Security (TIFS)*.
 
 The LA3D (*Lightweight Adaptive Privacy Anonymization for Video Anomaly Detection*) provides computationally efficient and dynamic anonymization (AN) that enhances privacy protection while maintaining the accuracy of Video Anomaly Detection (VAD). 
 
